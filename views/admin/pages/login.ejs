@@ -1,0 +1,43 @@
+<!-- views/admin/pages/login.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <% include ../partials/head %>
+</head>
+
+<body>
+    <div class="container login-container">
+        <div class="row">
+            <div class="offset-md-3 col-md-6 login-form-1">
+                <h3>Admin Login</h3>
+                <form method="POST">
+                    <div class="form-group">
+                        <input type="text" name="username" class="form-control" placeholder="Your Username *" value=""
+                            required />
+                    </div>
+                    <div class="form-group">
+                        <input type="password" name="password" class="form-control" placeholder="Your Password *"
+                            value="" required />
+                    </div>
+                    <% if (locals.error) { %>
+                    <p class="text-danger text-center"><%= error %> </p>
+                    <% } %>
+                    <div class="form-group">
+                        <input type="submit" class="btnSubmit" value="Login" />
+                    </div>
+                    <div class="form-group">
+                        <a href="#" class="ForgetPwd">Forget Password?</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <% include ../partials/footer %>
+    </footer>
+
+</body>
+
+</html>

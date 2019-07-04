@@ -1,0 +1,314 @@
+<!-- views/admin/pages/dashboard.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <% include ../partials/head %>
+  <script>
+   function selectTrackBtn(key) {
+        for (i = 0; i < 20; i++) {
+          $('#trackBtn_'+i).css('background-color', '#ddd');
+          $('#trackBody_'+i).css('background-color', '');
+        }
+        $('#trackBtn_'+key).css('background-color', '#13cc45');
+        $('#trackBody_'+key).css('background-color', '#d3fba8');
+      }
+  </script>
+</head>
+
+<body>
+
+  <header>
+    <% include ../partials/header %>
+  </header>
+
+  <div id = 'search-track' class="container">
+    <div class="row">
+      <div class="offset-md-2 col-md-8 login-form-1">
+        <h3>Add a song to play</h3>
+            <form method="POST" onsubmit="return false;">
+          <div class="form-group">
+            <!-- <select id="artist_id" name="artist_id" class="form-control">
+                            <option value="">-- Select an artist--</option>
+                        </select> -->
+            <div style="width: 87%; float: left; margin-right: 5px;">
+              <input type="text" id="artist_id" name="artist_id" class="form-control" placeholder="Enter Artist Name">
+            </div>
+
+            <input type="submit" id="search_artist" class="btn" value="Search" />
+          </div>
+
+          <div id='showPlayList' class="form-group" style="display: none">
+            <LI id="list-music-track" class="form-control" style="display: block;">
+                  <!-- <div>
+                      <input class="btn" type="button" id="prvBtn" value="Prev">
+                      <input class="btn" type="button" id="nxtvBtn" value="Next">
+                    </div> -->
+            </LI>
+            <div id="nextPrevBtn" style="padding: 5px 0px;
+                        flex: 1;
+                        flex-direction: row;
+                        align-items: flex-end;
+                        float: right;
+                        display: none;" >
+                <input style="width: 120px; background-color: #ecddb1f0; border: 1px solid #e0a638; margin: 0px 10px 0px 10px;" class="btn" type="button" id="prvBtn" value="Prev">
+                <span id="pageNo" style="
+                border: 1px solid #222;
+                padding: 6px 8px;
+                border-radius: 4px;
+                margin-right: 1px;
+                background-color: #fff;
+                border-color: #d6ae3e;
+                ">  </span>
+                <input style="width: 120px; background-color: #ecddb1f0; border: 1px solid #e0a638; margin: 0px 10px 0px 10px;" class="btn" type="button" id="nxtBtn" value="Next">
+            </div>
+            
+          </div>
+
+          <div class="form-group">
+            <span>Enter how many time you want to play: </span>
+            <select id="track_name" name="track_name" class="">
+              <script>
+                for (i = 1; i <= 10; i++) {
+                  var option = document.createElement("option");
+                  option.text = i;
+                  option.value = i;
+                  var select = document.getElementById("track_name");
+                  select.appendChild(option);
+                }
+              </script>
+            </select>
+          </div>
+
+          <% if (locals.error) { %>
+          <p class="text-danger text-center">ssss<%= error %> </p>
+          <% } %>
+          
+          <p id="successMsg" class="text-success text-center"></p>
+
+          <div class="form-group">
+            <input type="button" id="submit_button" class="btnSubmit" value="Submit" />
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var selectedSongUrl = null;
+    var nextPageUrl = null;
+    var prevPageUrl = null;
+    // var pageNo = null;
+    $(document).ready(function () {
+      document.getElementById('search_artist').onclick = () => { console.log('Artist name: ', document.getElementById('artist_id').value) }
+
+      function showSongsTrack(response) {
+        console.log('total', response);
+        selectedSongUrl = null;
+        prevPageUrl = response.previous;
+        nextPageUrl = response.next;
+        $('#pageNo').html(Math.floor((response.offset/10)/2)+1);
+
+        if(nextPageUrl == null) {
+          $("#nxtBtn").css('cursor', 'not-allowed');
+          $("#nxtBtn").attr("disabled", true);
+        } else {
+          $("#nxtBtn").css('cursor', 'pointer');
+          $("#nxtBtn").attr("disabled", false);
+        }
+
+        if(prevPageUrl == null) {
+          $("#prvBtn").css('cursor', 'not-allowed');
+          $("#prvBtn").attr("disabled", true);
+        } else {
+          $("#prvBtn").css('cursor', 'pointer');
+          $("#prvBtn").attr("disabled", false);
+        }
+        
+        for (let [key, value] of Object.entries(response.items)) {
+              // console.log('TRACK_NAME: ', value.name);
+              // console.log('PALY:  :', value.external_urls.spotify);
+              // console.log('ALBUM_NAME: ', value.album.name);
+              // console.log('album-art: ', value.album.images[1].url);
+              // console.log('artist name : ', value.artists[0].name);
+              var artistName = [];
+              value.artists.map((a) => {
+                // console.log('a_name: ', a.name, '--CLICK-- : ', a.external_urls.spotify);
+                artistName.push(a.name);
+              });
+
+              function millisToMinutesAndSeconds(millis) {
+                var minutes = Math.floor(millis / 60000);
+                var seconds = ((millis % 60000) / 1000).toFixed(0);
+                return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
+              }
+              
+
+              $("#list-music-track").append(`
+              <div class="container" style="">
+                  <div id="trackBody_${key}" class="card" style="height:150px; width: 100%;">
+                    <div>
+                        <img src="${value.album.images[1].url}" style="float: left" width="150px" height="150px" alt="Card image">
+                        <div style="
+                        float: left;
+                        padding: 4px 6px;
+                        margin-left: 10px;
+                        width: 40%;
+                        height: 150px;
+                        overflow: auto;
+                        ">
+                            <h5>${value.name}</h4>
+                            <span> ${value.album.name}</span><br>
+                            <span> ${value.album.release_date}</span><br>
+                            <!-- <span><strong>&#x1F642;</strong></span>  -->
+                            <i class="fa fa-thumbs-up"></i>
+                            <sppan>  ${value.popularity}</span> &nbsp&nbsp
+                              <!-- <i class="fa fa-history"></i> -->
+                            <span> Duration: ${millisToMinutesAndSeconds(value.duration_ms)} </span> &nbsp&nbsp
+                            <a href="${value.preview_url}" target="_blank"><span> &#9658;</span></a>
+                        </div>
+
+                        <div style="
+                          float: left;
+                          padding: 4px 6px;
+                          width: 32%;
+                          height: 150px;
+                          margin-left: 4px;
+                          // overflow: auto;
+                        ">
+                            <span><strong>Artist Name</strong></span>
+                            <div style="overflow: auto;">
+                                <span> ${artistName.toString()}</span>
+                            </div>
+                            <div style="height: 40px">
+                              <input type="button" id="trackBtn_${key}" onclick="function hi(){selectedSongUrl = '${value.external_urls.spotify}'; selectTrackBtn(${key});};hi();"  class="btn" style="width: 80px;" value="select" />
+                              <input type="button" onclick="window.open('${value.external_urls.spotify}')" class="btn" style="width: 80px; background-color: #2e829b; color: white;" value="Play &#9658;" />
+                            </div>
+                        </div>
+                    </div>
+
+                  </div>
+                  <br>
+                </div>
+              `);
+
+            }
+        
+        $('#successMsg').hide();
+        $("#nextPrevBtn").show();
+
+      }
+
+      function listTrackByPage(trackUrl) {
+        console.log('next Song: ', trackUrl);
+        $('#successMsg').hide();
+        if(trackUrl == '') {
+          return;
+        }
+
+        $.ajax({
+          url: '/api/track',
+          data: {
+            url: trackUrl,
+          },
+          success: function (response) {            
+            $("#list-music-track").html('');
+            if(response.items.length < 1) {
+              $("#list-music-track").append(`
+                <h5 style="padding: 4px 6px; color: rgb(148, 63, 63)">No playlist found</h5>
+              `);
+              return;
+            }
+            showSongsTrack(response);
+          },
+          error: function (errro) {
+            console.log(error);
+          }
+        });
+      }
+
+      function getArtist(artist_name) {
+        console.log('artist_name:::::', artist_name);
+        if(artist_name == '') {
+          $("#list-music-track").html('');
+          $("#showPlayList").hide();
+          $("#nextPrevBtn").hide();
+          // $("#list-music-track").hide();
+          return;
+        } else {
+          $("#showPlayList").show();
+          // $("#list-music-track").show();
+        }
+        $.ajax({
+          url: '/api/artist',
+          data: {
+            artistName: artist_name,
+          },
+          success: function (response) {            
+            $("#list-music-track").html('');
+            if(response.items.length < 1) {
+              $("#list-music-track").append(`
+                <h5 style="padding: 4px 6px; color: rgb(148, 63, 63)">No playlist found</h5>
+              `);
+              return;
+            }
+            showSongsTrack(response);
+          },
+          error: function (errro) {
+            console.log(error);
+          }
+        });
+      }
+      
+      $("#search_artist").on('click', () => {
+        var artist_name = document.getElementById('artist_id').value;
+        getArtist(artist_name);
+      })
+
+      $("#submit_button").on('click', () => {
+        console.log('selectedSongUrl :', selectedSongUrl);
+        console.log('count: ', $("#track_name :selected").val());
+        // admin/pages/dashboard
+        var playCount = $("#track_name :selected").val();
+        if (selectedSongUrl == null) {
+          alert('Please select a track');
+          return;
+        }
+        $.ajax({
+          url: '/admin/play-track',
+          type: "POST",
+          data: {
+            selectedTrack: selectedSongUrl,
+            playCount: playCount,
+          },
+          success: function (response) { 
+            alert(response);
+            $('#successMsg').show();
+            $('#successMsg').html(response);
+          },
+          error: function (errro) {
+            console.log(error);
+          }
+        });
+
+      });
+      
+      $("#nxtBtn").on('click', () => {
+        listTrackByPage(nextPageUrl);
+      });
+      
+      $("#prvBtn").on('click', () => {
+        listTrackByPage(prevPageUrl);
+      });
+
+    });
+  </script>
+
+  <footer>
+    <% include ../partials/footer %>
+  </footer>
+
+</body>
+
+</html>
