@@ -1,4 +1,3 @@
-var artist = require('./artist');
-var track = require('./track');
+var search = require('./search');
 
-module.exports = { artist, track };
+module.exports = { search };

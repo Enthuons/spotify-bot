@@ -7,18 +7,19 @@ var api = require('../controllers/api');
 router.use('/', (req, res, next) => {
   const user = req.session.user;
   if (!user) {
-    return res.send('401', 'login required');
+    return res.status(401).send('login required');
   }
   next();
 });
 
 // api base route
 router.get('/', (req, res) => {
-  res.send('welcome to apis');
+  res.status(200).send('welcome to APIs');
 });
 
-// get all artists
-router.get('/artist', api.artist.list);
-router.get('/track', api.track.list);
+// search tracks
+router.get('/search', api.search.track);
+// play a song in bot
+router.post('/play-track', api.search.playTrack);
 
 module.exports = router;

@@ -9,12 +9,11 @@ const spotify = new Spotify({
   secret: config.spotify_client_secret
 });
 
-listArtist = (query) => {
-  return spotify.search({ type: 'track', query: query })
+searchTrack = (query, url) => {
+  if (url) {
+    return spotify.request(url);
+  }
+  return spotify.search({ type: 'track', query: query });
 }
 
-listTrackByPage = (url) => {
-  return spotify.request(url)
-}
-
-module.exports = { listArtist, listTrackByPage };
+module.exports = { searchTrack };
