@@ -39,3 +39,6 @@ COPY package.json .
 
 # install project dependencies
 RUN npm install
+
+# install nodemon for development for hot reload
+RUN npm install -g nodemon

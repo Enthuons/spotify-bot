@@ -28,7 +28,7 @@ router.use('/api', apiRoutes);
 
 // 404 route
 router.get('*', (req, res) => {
-    res.send(404, 'NOT FOUND');
+    res.status(404).send('NOT FOUND');
 });
 
 module.exports = router;

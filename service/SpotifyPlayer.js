@@ -50,8 +50,8 @@ const SpotifyPlayer = {
       // const pauseButton = driver.findElement(element);
       // await driver.wait(until.elementIsVisible(pauseButton), 20000);
       console.log("track in now started playing in headless browser");
-      await driver.sleep(30000);
-      console.log("song played for 30 seconds");
+      await driver.sleep(45000);
+      console.log("song played for 45 seconds");
     } catch (e) {
       console.log(e);
     } finally {

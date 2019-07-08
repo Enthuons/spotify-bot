@@ -19,7 +19,5 @@ router.use('/', (req, res, next) => {
 router.get('/', admin.dashboard.home);
 router.get('/login', admin.auth.login);
 router.post('/login', admin.auth.login);
-router.post('/play-track', admin.dashboard.playTrack);
-
 
 module.exports = router;
