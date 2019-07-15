@@ -16,8 +16,9 @@ router.use('/', (req, res, next) => {
   next();
 });
 
-router.get('/', admin.dashboard.home);
+router.get('/', admin.dashboard.tracklist);
 router.get('/login', admin.auth.login);
 router.post('/login', admin.auth.login);
+router.get('/addtracklist', admin.dashboard.home);
 
 module.exports = router;

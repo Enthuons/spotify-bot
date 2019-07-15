@@ -1,0 +1,49 @@
+Arguments: 
+  /home/enthuons/.nvm/versions/node/v12.4.0/bin/node /usr/share/yarn/bin/yarn.js add mysql
+
+PATH: 
+  /home/enthuons/.nvm/versions/node/v12.4.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/enthuons/Android/Sdk/emulator:/home/enthuons/Android/Sdk/tools:/home/enthuons/Android/Sdk/tools/bin:/home/enthuons/Android/Sdk/platform-tools
+
+Yarn version: 
+  1.16.0
+
+Node version: 
+  12.4.0
+
+Platform: 
+  linux x64
+
+Trace: 
+  Error: EACCES: permission denied, mkdir '/var/www/html/nodejs/spotify-bot/node_modules/array-flatten'
+
+npm manifest: 
+  {
+    "name": "spotify-bot",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": {
+      "name": "Krishan Kumar Mourya",
+      "email": "mouryakrishan@gmail.com",
+      "url": "https://www.linkedin.com/in/krishan-kumar-mourya"
+    },
+    "license": "ISC",
+    "dependencies": {
+      "body-parser": "^1.19.0",
+      "ejs": "^2.6.2",
+      "express": "^4.17.1",
+      "express-session": "^1.16.2",
+      "mysql": "^2.17.1",
+      "node-spotify-api": "^1.1.1",
+      "selenium-webdriver": "^4.0.0-alpha.3"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

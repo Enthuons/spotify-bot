@@ -3,6 +3,7 @@ const router = express.Router();
 
 const adminRoutes = require('./admin');
 const apiRoutes = require('./api');
+const modelRoutes = require('./model');
 
 // middleware to log request time
 router.use('/', (req, res, next) => {
@@ -25,6 +26,9 @@ router.get('/logout', (req, res) => {
 router.use('/admin', adminRoutes);
 // api routes
 router.use('/api', apiRoutes);
+
+// model routes
+router.use('/model', modelRoutes);
 
 // 404 route
 router.get('*', (req, res) => {

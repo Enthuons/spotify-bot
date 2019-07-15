@@ -2,4 +2,8 @@ const home = (req, res) => {
     res.render('admin/pages/dashboard');
 }
 
-module.exports = { home };
+const tracklist = (req, res) => {
+    res.render('admin/pages/tracklist');
+}
+
+module.exports = { home, tracklist };
