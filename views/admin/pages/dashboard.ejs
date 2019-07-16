@@ -300,8 +300,10 @@
           type: "POST",
           data: trackListArray[selectedSong],
           success: function (response) { 
-            // console.log('addtrscks: ', response);
-            alert('Track successfully added');
+
+            if (response =='track successfully inserted') alert('Track successfully added');
+            if (response =='Already Exist') alert('Track already in list');
+            
             selectedSong = null;
             removeSelection();
           },

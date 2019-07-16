@@ -26,6 +26,10 @@ router.get('/tracklist', model.tracklistModel.getTrackList);
 // remove track
 router.post('/removetrack', model.tracklistModel.removeTrack);
 
+// playTrackByBot
+router.get('/playtrackbybot', model.bot.playTrackByBot);
+
+
 // // store tracklist
 // router.post('/played-song', model.tracklistModel.storeTrackList);
 

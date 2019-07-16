@@ -7,7 +7,7 @@ const {Builder, By, Key, until} = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
  
 const SpotifyPlayer = {
-  play: async (musicUrl) => {
+  play: async (musicUrl, callback) => {
     console.log("got a song to play");
     console.log("opening: " + musicUrl);
     let cookies = [];
@@ -49,16 +49,18 @@ const SpotifyPlayer = {
       // const element = By.css("[title='Pause']");
       // const pauseButton = driver.findElement(element);
       // await driver.wait(until.elementIsVisible(pauseButton), 20000);
-      console.log("track in now started playing in headless browser");
+      console.log("track is now started playing in headless browser");
       await driver.sleep(45000);
       console.log("song played for 45 seconds");
     } catch (e) {
       console.log(e);
     } finally {
-      cookies = await driver.manage().getCookies();
-      fs.writeFile('cookies.json', JSON.stringify(cookies), 'utf8', () => console.log('cookies saved'));
+      // cookies = await driver.manage().getCookies();
+      // fs.writeFile('cookies.json', JSON.stringify(cookies), 'utf8', () => console.log('cookies saved'));
       await driver.quit();
+      callback('done');
     }
+    
   }
 };
 
