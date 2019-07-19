@@ -103,7 +103,6 @@
     var prevPageUrl = null;
     var trackListArray = [];
     var selectedSong = null;
-    var BASE_URL= 'http://0.0.0.0:3000/';
 
     function searchTracks(url) {
       var search = $('#search').val();
@@ -328,8 +327,7 @@
       });
       
       $('#onClickDashboard').on('click', () => {
-        window.location.replace(`${BASE_URL}admin`);
-        // return res.redirect('/admin/addtracklist');
+        window.location.replace(`/admin`);
       });
 
     });

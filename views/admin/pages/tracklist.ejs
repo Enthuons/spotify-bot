@@ -8,7 +8,6 @@
 </head>
 
 <script>
-var BASE_URL= 'http://0.0.0.0:3000/';
 </script>
 
 <body>
@@ -79,7 +78,7 @@ var BASE_URL= 'http://0.0.0.0:3000/';
               // }, 200);
 
               alert('Track remove successfully');
-              window.location.replace(`${BASE_URL}admin/`);
+              window.location.replace(`/admin/`);
               selectedTrack = null;
 
             } else {
@@ -192,7 +191,7 @@ var BASE_URL= 'http://0.0.0.0:3000/';
     $(document).ready(function () {
      
       $('#onClickAddNewTrack').on('click', () => {
-        window.location.replace(`${BASE_URL}admin/addtracklist`);
+        window.location.replace(`/admin/addtracklist`);
         // return res.redirect('/admin/addtracklist');
       });
       // $('#removeTrack').on('click', () => 

@@ -5,8 +5,6 @@ const bodyParser = require('body-parser');
 
 const playTrackByBot = require('./models/bot')
 
-playTrackByBot.playTrackByBot();
-
 const routes = require('./routes');
 
 const app = express();
@@ -34,3 +32,5 @@ const server = app.listen(PORT, HOST, () => {
   const port = server.address().port;
   console.log(`server running at http://${host}:${port}`);
 });
+
+playTrackByBot.playTrackByBot();
