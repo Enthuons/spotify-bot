@@ -8,20 +8,16 @@
   <script>
     removeSelection = () =>  {
       for (i = 0; i < 20; i++) {
-          $('#trackBtn_'+i).css('background-color', '#ddd');
-          $('#trackBody_'+i).css('background-color', '');
-        }
-    }
-   selectTrackBtn = (key) => {
-     selectedSong = key;
-     removeSelection();
-        // for (i = 0; i < 20; i++) {
-        //   $('#trackBtn_'+i).css('background-color', '#ddd');
-        //   $('#trackBody_'+i).css('background-color', '');
-        // }
-        $('#trackBtn_'+key).css('background-color', '#13cc45');
-        $('#trackBody_'+key).css('background-color', '#d3fba8');
+        $('#trackBtn_'+i).css('background-color', '#ddd');
+        $('#trackBody_'+i).css('background-color', '');
       }
+    }
+    selectTrackBtn = (key) => {
+      selectedSong = key;
+      removeSelection();
+      $('#trackBtn_'+key).css('background-color', '#13cc45');
+      $('#trackBody_'+key).css('background-color', '#d3fba8');
+    }
   </script>
 </head>
 
@@ -55,12 +51,13 @@
           <div id='search_results' class="form-group" style="display: none">
             <div id="list-music-track" class="form-control">
             </div>
-            <div id="nextPrevBtn" style="padding: 5px 0px;
-                        flex: 1;
-                        flex-direction: row;
-                        align-items: flex-end;
-                        float: right;
-                        display: none;" >
+            <div id="nextPrevBtn" style="
+                padding: 5px 0px;
+                flex: 1;
+                flex-direction: row;
+                align-items: flex-end;
+                float: right;
+                display: none;" >
                 <input style="width: 120px; background-color: #ecddb1f0; border: 1px solid #e0a638; margin: 0px 10px 0px 10px;" class="btn" type="button" id="prvBtn" value="Prev">
                 <span id="pageNo" style="
                 border: 1px solid #222;
@@ -72,7 +69,6 @@
                 ">  </span>
                 <input style="width: 120px; background-color: #ecddb1f0; border: 1px solid #e0a638; margin: 0px 10px 0px 10px;" class="btn" type="button" id="nxtBtn" value="Next">
             </div>
-            
           </div>
 
           <div class="form-group">
@@ -134,9 +130,7 @@
         },
         error: function (error) {
           console.error(error);
-          $("#list-music-track").html(`
-            <h5 class="text-center alert-danger">Unknown error occured</h5>
-          `);
+          $("#list-music-track").html(`<h5 class="text-center alert-danger">Unknown error occured</h5>`);
         }
       });
     }
@@ -147,8 +141,6 @@
       prevPageUrl = response.previous;
       nextPageUrl = response.next;
       $('#pageNo').html(Math.floor(response.offset/20)+1);
-
-      // console.log(response);
 
       if(nextPageUrl == null) {
         $("#nxtBtn").css('cursor', 'not-allowed');
@@ -257,9 +249,6 @@
 
     function submitTrack() {
       var count = $("#play_count").val();
-
-      console.log('count: ', count);
-
       if (!trackListArray.length > 0) {
         alert('Please search a track');
         return;
@@ -295,19 +284,17 @@
         // save tracklist api
 
         $.ajax({
-          url: '/model/tracklist',
+          url: '/admin/tracklist',
           type: "POST",
           data: trackListArray[selectedSong],
           success: function (response) { 
-
             if (response =='track successfully inserted') alert('Track successfully added');
             if (response =='Already Exist') alert('Track already in list');
-            
             selectedSong = null;
             removeSelection();
           },
           error: function (error) {
-            console.log(error);
+            console.log('ERROR from submit tracklist',error);
           }
         });
       }
@@ -318,18 +305,12 @@
 
       $("#submit_button").on('click', submitTrack);
       
-      $("#nxtBtn").on('click', () => {
-        searchTracks(nextPageUrl);
-      });
+      $("#nxtBtn").on('click', () => searchTracks(nextPageUrl));
       
-      $("#prvBtn").on('click', () => {
-        searchTracks(prevPageUrl);
-      });
+      $("#prvBtn").on('click', () => searchTracks(prevPageUrl));
       
-      $('#onClickDashboard').on('click', () => {
-        window.location.replace(`/admin`);
-      });
-
+      $('#onClickDashboard').on('click', () => window.location.replace(`/admin`));
+      
     });
   </script>
 

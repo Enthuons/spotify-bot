@@ -21,4 +21,8 @@ router.get('/login', admin.auth.login);
 router.post('/login', admin.auth.login);
 router.get('/addtracklist', admin.dashboard.home);
 
+router.post('/tracklist', admin.dashboard.insertTrackList);
+router.get('/tracklist', admin.dashboard.getAllTrackList);
+router.post('/removetrack', admin.dashboard.removeTrack);
+
 module.exports = router;

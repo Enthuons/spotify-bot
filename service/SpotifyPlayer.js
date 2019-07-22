@@ -8,8 +8,8 @@ const chrome = require('selenium-webdriver/chrome');
  
 const SpotifyPlayer = {
   play: async (musicUrl, callback) => {
-    console.log("got a song to play");
-    console.log("opening: " + musicUrl);
+    console.log("got a song to play. music_url: ", musicUrl);
+    // console.log("opening: " + musicUrl);
     let cookies = [];
     try {
       const fileContents = await fs.promises.readFile('cookies.json');
@@ -55,7 +55,7 @@ const SpotifyPlayer = {
     } catch (e) {
       console.log(e);
     } finally {
-      // cookies = await driver.manage().getCookies();
+      cookies = await driver.manage().getCookies();
       // fs.writeFile('cookies.json', JSON.stringify(cookies), 'utf8', () => console.log('cookies saved'));
       await driver.quit();
       callback('done');

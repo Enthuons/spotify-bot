@@ -1,6 +1,4 @@
 var tracklistModel = require('./tracklistModel');
-var bot = require('./bot');
+var playedTracksModel = require('./playedTracksModel');
 
-var mysql = require('mysql');
-
-module.exports = {tracklistModel, bot};
+module.exports = {tracklistModel, playedTracksModel};

@@ -3,7 +3,7 @@ const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 
-const playTrackByBot = require('./models/bot')
+const playTrackByBot = require('./service/bot')
 
 const routes = require('./routes');
 

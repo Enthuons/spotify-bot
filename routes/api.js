@@ -20,6 +20,6 @@ router.get('/', (req, res) => {
 // search tracks
 router.get('/search', api.search.track);
 // play a song in bot
-router.post('/play-track', api.search.playTrack);
+// router.post('/play-track', api.search.playTrack);
 
 module.exports = router;

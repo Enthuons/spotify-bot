@@ -12,17 +12,17 @@ const track = (req, res) => {
     });
 }
 
-const playTrack = (req, res) => {
-  data = req.body;
-  if(data.track) {
-      var count = data.count;
-      console.log(count);
-      SpotifyPlayer.play(data.track);
-      // res.render('admin/pages/success');
-      res.status(200).send('Song is being played by bot');
-  } else {
-      res.status(401).send('Error 404, no song url found');
-  }  
-}
+// const playTrack = (req, res) => {
+//   data = req.body;
+//   if(data.track) {
+//       var count = data.count;
+//       console.log(count);
+//       SpotifyPlayer.play(data.track);
+//       // res.render('admin/pages/success');
+//       res.status(200).send('Song is being played by bot');
+//   } else {
+//       res.status(401).send('Error 404, no song url found');
+//   }  
+// }
 
-module.exports = { track, playTrack };
+module.exports = { track };

@@ -7,43 +7,45 @@
   <% include ../partials/head %>
 </head>
 
-<script>
-</script>
-
 <body>
   <header>
     <% include ../partials/header %>
   </header>
 
-  <div id = 'search-track' class="container">
+  <div id='search-track' class="container">
     <div class="row">
       <div class="offset-md-1 col-md-10 login-form-1">
         <h3>Tracks to play</h3>
-        <button id = "onClickAddNewTrack" class="btn btn-info" style="
-            float: right;
-            font-size: 13px;
-            margin: 5px 5px 5px 5px;">
-            <i class="fa fa-plus"></i> Add new tracks
+        <button id="onClickAddNewTrack" class="btn btn-info" style="
+          float: right;
+          font-size: 13px;
+          margin: 5px 5px 5px 5px;">
+          <i class="fa fa-plus"></i> Add new tracks
         </button>
 
-            <div id="list-music-track" class="form-control"></div>
-            <!-- <div id="nextPrevBtn" style="padding: 5px 0px;
-                        flex: 1;
-                        flex-direction: row;
-                        align-items: flex-end;
-                        float: right;
-                        display: none;" >
-                <input style="width: 120px; background-color: #ecddb1f0; border: 1px solid #e0a638; margin: 0px 10px 0px 10px;" class="btn" type="button" id="prvBtn" value="Prev">
-                <span id="pageNo" style="
+        <div id="list-music-track" class="form-control"></div>
+        <div id="nextPrevBtn" style="
+          padding: 5px 0px;
+          flex: 1;
+          flex-direction: row;
+          align-items: flex-end;
+          float: right;
+          display: none;">
+          <input
+            style="width: 120px; background-color: #ecddb1f0; border: 1px solid #e0a638; margin: 0px 10px 0px 10px;"
+            class="btn" type="button" id="prvBtn" value="Prev">
+          <span id="pageNo" style="
                 border: 1px solid #222;
                 padding: 6px 8px;
                 border-radius: 4px;
                 margin-right: 1px;
                 background-color: #fff;
                 border-color: #d6ae3e;
-                ">  </span>
-                <input style="width: 120px; background-color: #ecddb1f0; border: 1px solid #e0a638; margin: 0px 10px 0px 10px;" class="btn" type="button" id="nxtBtn" value="Next">
-            </div>           -->
+                "> </span>
+          <input
+            style="width: 120px; background-color: #ecddb1f0; border: 1px solid #e0a638; margin: 0px 10px 0px 10px;"
+            class="btn" type="button" id="nxtBtn" value="Next">
+        </div>
       </div>
     </div>
   </div>
@@ -53,61 +55,59 @@
   </footer>
 
   <script>
-
     var allTracklistArray = [];
     var selectedTrack = null;
 
     removeTrack = (key) => {
       selectedTrack = key;
 
-      if (!allTracklistArray[selectedTrack])return; 
+      if (!allTracklistArray[selectedTrack]) return;
 
       if (!confirm("Are you really want to remove this track?")) return;
 
       $.ajax({
-          url: '/model/removetrack',
-          type: "POST",
-          data: {id: allTracklistArray[selectedTrack].id},
-          success: function (response) { 
-            if (response.affectedRows > 0) {
-              // gettrackList();
-              // var x = gettrackList();
-              // gettrackList();
-              // setTimeout(() => {
-              //  alert('Track remove successfully');
-              // }, 200);
+        url: '/admin/removetrack',
+        type: "POST",
+        data: { id: allTracklistArray[selectedTrack].id },
+        success: function (response) {
+          if (response.affectedRows > 0) {
+            // gettrackList();
+            // var x = gettrackList();
+            // gettrackList();
+            // setTimeout(() => {
+            //  alert('Track remove successfully');
+            // }, 200);
 
-              alert('Track remove successfully');
-              window.location.replace(`/admin/`);
-              selectedTrack = null;
+            alert('Track remove successfully');
+            window.location.replace(`/admin/`);
+            selectedTrack = null;
 
-            } else {
-              alert('Unknown Error occured! error_code: 101');
-            }
-          },
-          error: function (error) {
-            console.log(error);
+          } else {
+            alert('Unknown Error occured! error_code: 101');
           }
-        });
+        },
+        error: function (error) {
+          console.log('ERROR from remove tracklist', error);
+        }
+      });
     }
 
     showSongsTrack = (response) => {
-        // var allTracklistArray = [];
-        var selectedTrack = null;
+      var selectedTrack = null;
 
-        $("#list-music-track").html('');
+      $("#list-music-track").html('');
 
-        response.map((item, key) => {
+      response.map((item, key) => {
 
-          allTracklistArray.push(item);
-          
-          function millisToMinutesAndSeconds(millis) {
-            var minutes = Math.floor(millis / 60000);
-            var seconds = ((millis % 60000) / 1000).toFixed(0);
-            return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
-          }   
+        allTracklistArray.push(item);
 
-          $("#list-music-track").append(`
+        function millisToMinutesAndSeconds(millis) {
+          var minutes = Math.floor(millis / 60000);
+          var seconds = ((millis % 60000) / 1000).toFixed(0);
+          return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
+        }
+
+        $("#list-music-track").append(`
           <div>
             <div id="trackBody_${key}" class="card" style="height:150px; width: 100%;">
               <div>
@@ -121,7 +121,7 @@
                   overflow: auto;
                   ">
                       <h5>${item.track_name}</h4>
-                      <span> ${item.album_name  }</span><br>
+                      <span> ${item.album_name}</span><br>
                       <span>Released: ${item.release_date}</span><br>
                       <!-- <span><strong>&#x1F642;</strong></span>  -->
                       <i class="fa fa-thumbs-up"></i>
@@ -163,38 +163,31 @@
             </div>
             <br>
           </div>
-        `);  
-        
+        `);
+
       });
-  
+
       // $('#successMsg').hide();
       // $("#nextPrevBtn").show();
     }
 
     gettrackList = () => {
-        console.log('hi');
-        $.ajax({
-          url: '/model/tracklist',
-          type: "GET",
-          success: function (response) {
-              console.log(response);
-              showSongsTrack(response);
-          },
-          error: function (error) {
-            console.log(error);
-          }
-        });
-     }
-
-     gettrackList();
-     
-    $(document).ready(function () {
-     
-      $('#onClickAddNewTrack').on('click', () => {
-        window.location.replace(`/admin/addtracklist`);
-        // return res.redirect('/admin/addtracklist');
+      $.ajax({
+        url: '/admin/tracklist',
+        type: "GET",
+        success: function (response) {
+          showSongsTrack(response);
+        },
+        error: function (error) {
+          console.log('ERROR from get tracklist', error);
+        }
       });
-      // $('#removeTrack').on('click', () => 
+    }
+
+    gettrackList();
+
+    $(document).ready(function () {
+      $('#onClickAddNewTrack').on('click', () => window.location.replace(`/admin/addtracklist`));
     });
   </script>
 
