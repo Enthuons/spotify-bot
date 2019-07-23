@@ -1,8 +1,7 @@
 var db = require('./dbConnection');
 
 const insertTrackIntoPlayedList = (data, callback) => {
-  var played_by_bot_id = `spotify_bot_${Math.floor(Math.random() * 20) + 1}`;
-  var sql = `INSERT INTO played_tracks(track_id, played_by_bot_id) VALUES ('${data}', '${played_by_bot_id}')`;
+  var sql = `INSERT INTO played_tracks(track_id, played_by_bot_id, date) VALUES ('${data.track_id}', '${data.bot_id}', '${data.date}')`;
   db.query(sql, function (err, result) {
       if (err) callback(err,null);
       if (result) callback(null,result);

@@ -6,7 +6,7 @@ const apiRoutes = require('./api');
 
 // middleware to log request time
 router.use('/', (req, res, next) => {
-    console.log('Request:', req.url, new Date());
+    console.log(new Date(), 'Request:', req.url);
     next()
 });
 

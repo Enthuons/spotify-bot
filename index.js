@@ -3,7 +3,7 @@ const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 
-const playTrackByBot = require('./service/bot')
+const bot = require('./service/bot')
 
 const routes = require('./routes');
 
@@ -33,4 +33,5 @@ const server = app.listen(PORT, HOST, () => {
   console.log(`server running at http://${host}:${port}`);
 });
 
-playTrackByBot.playTrackByBot();
+bot.playTracks();
+console.log('Start playing tracks... ');
