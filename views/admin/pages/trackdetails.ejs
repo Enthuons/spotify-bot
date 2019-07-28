@@ -1,0 +1,189 @@
+<!-- views/admin/pages/tracklist.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <% include ../partials/head %>
+  <!-- <script>var track_id = window.location.search.split("=")[1];</script> -->
+</head>
+
+<body>
+  <header>
+    <% include ../partials/header %>
+  </header>
+
+  <div id='search-track' class="container">
+    <div class="row">
+      <div class="offset-md-1 col-md-10 login-form-1">
+        <h3>Track Details</h3>
+        <p id="errorMsg" style="
+        float: left;
+        font-size: 21px;
+        margin: 5px 5px 5px 5px;
+        color: #b30a0ab0;
+        padding: 1px 10px;"></p>
+        <button id="onClickAddNewTrack" class="btn btn-info" style="
+          float: right;
+          font-size: 13px;
+          margin: 5px 5px 5px 5px;">
+          <i class="fa fa-arrow-circle-left"></i> &nbsp Dashboard
+          <!-- <i class="fa fa-arrow-left"></i> &nbsp Dashboard -->
+
+        </button>
+        <div id="list-music-track" class="form-control" style="min-height: 45px;"></div>
+        
+        <div id="track-details" class="form-control" style="min-height: 45px;">
+
+          <table class="table table-hover">
+              <caption style="text-align: center; caption-side: top;">Play records</caption>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Play count</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div> 
+
+
+        </div>
+        <div id="nextPrevBtn" style="
+          padding: 5px 0px;
+          flex: 1;
+          flex-direction: row;
+          align-items: flex-end;
+          float: right;
+          display: none;">
+          <input
+            style="width: 120px; background-color: #ecddb1f0; border: 1px solid #e0a638; margin: 0px 10px 0px 10px;"
+            class="btn" type="button" id="prvBtn" value="Prev">
+          <span id="pageNo" style="
+                border: 1px solid #222;
+                padding: 6px 8px;
+                border-radius: 4px;
+                margin-right: 1px;
+                background-color: #fff;
+                border-color: #d6ae3e;
+                "> </span>
+          <input
+            style="width: 120px; background-color: #ecddb1f0; border: 1px solid #e0a638; margin: 0px 10px 0px 10px;"
+            class="btn" type="button" id="nxtBtn" value="Next">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <% include ../partials/footer %>
+  </footer>
+
+  <script>
+  var response = {};
+  step1 = () => {
+    var track_id = window.location.search.split("=")[1];
+    $.ajax({
+      url: '/admin/trackdetails',
+      type: "POST",
+      data: { track_id: track_id },
+        success: function (response) {
+          // console.log(response);
+          step2(response);
+      },
+      error: function (error) {
+        console.log('ERROR from gettrackdetails', error);
+      }
+    });
+  }
+  step1();
+
+
+  step2 = (response) => {
+    var data = response.trackDetails[0];
+
+    function millisToMinutesAndSeconds(millis) {
+      var minutes = Math.floor(millis / 60000);
+      var seconds = ((millis % 60000) / 1000).toFixed(0);
+      return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
+    }
+
+    $("#list-music-track").append(`
+      <div>
+        <div id="trackBody_1" class="card" style="height:150px; width: 100%;">
+          <div>
+              <img src="${data.album_art}" style="float: left" width="150px" height="150px" alt="Track image">
+              <div style="
+              float: left;
+              padding: 4px 6px;
+              margin-left: 10px;
+              width: 39%;
+              height: 150px;
+              overflow: auto;
+              ">
+                  <h5>${data.track_name}</h4>
+                  <span> ${data.album_name}</span><br>
+                  <span>Released: ${data.release_date}</span><br>
+                  <!-- <span><strong>&#x1F642;</strong></span>  -->
+                  <i class="fa fa-thumbs-up"></i>
+                  <sppan>  ${data.popularity}</span> &nbsp&nbsp
+                    <!-- <i class="fa fa-history"></i> -->
+                  <span> Duration: ${millisToMinutesAndSeconds(data.duration_ms)} </span> &nbsp&nbsp
+              </div>
+
+              <div style="
+                float: left;
+                padding: 4px 6px;
+                width: 39%;
+                height: 150px;
+                margin-left: 4px;
+                // overflow: auto;
+              ">
+                  <span><strong>Artist Name</strong></span>
+                  <div style="overflow: auto;">
+                      <span> ${data.artist_name}</span>
+                  </div>
+                  <br>
+                  <audio controls preload="none" title="Preview" style="height:20px">
+                    <source src="${data.preview_url}">
+                    Your browser does not support the audio tag.
+                  </audio>
+                  
+              </div>
+          </div>
+        </div>
+        <br>
+      </div>
+    `);
+
+    if (response.playDetails.length > 0) {
+
+      var unique_date = [...new Set(response.playDetails.map(item => item.date))];
+
+      response.playDetails.map((item) =>  {
+        // var a = unique_date.indexOf(item.date);
+        $("#track-details tbody").append(`
+          <tr>
+            <td>${item.date.slice(0, 10)}</td>
+            <td>${item.play_count}</td>
+          </tr>
+        `);
+      });
+    } else {
+      $('#track-details').html('');
+      $('#track-details').html('There have no play record found')
+    } 
+
+    
+  }
+ 
+    $(document).ready(function () {
+      $('#onClickAddNewTrack').on('click', () => window.location.replace(`/admin`));
+    });
+
+  </script>
+
+</body>
+
+</html>

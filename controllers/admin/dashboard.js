@@ -8,18 +8,31 @@ const tracklist = (req, res) => {
   res.render('admin/pages/tracklist');
 }
 
-//-------------------tracklist------------------------
+const trackDetails = (req, res) => {
+  // var track_id = req.query.id
+  res.render('admin/pages/trackdetails');
+}
 
-const getAllTrackList = (req, res) => {
-  model.tracklistModel.getAllTrackListModel(function (err, result) {
+const getTrackDetails = (req, res) => {
+  var data = req.body
+  var response = {};
+  model.tracklistModel.getTracklistByIdData(data, function (err, result) {
     if (err) return;
-    res.status(200).send(result);
+    response.trackDetails = result;
+    model.playedTracksModel.getPlayedTracksDetailsData(data, function (err, result) {
+      if (err) return;
+      response.playDetails = result;
+      res.status(200).send(response);
+    });
   });
 }
 
+
+//-------------------tracklist------------------------
+
 const removeTrack = (req, res) => {
   var data = req.body
-  model.tracklistModel.removeTrackModel(data, function (err, result) {
+  model.tracklistModel.removeTrackData(data, function (err, result) {
     if (err) return;
     res.status(200).send(result);
   });
@@ -27,10 +40,10 @@ const removeTrack = (req, res) => {
 
 const insertTrackList = (req, res) => {
   var data = req.body
-  model.tracklistModel.getTracklistByIdModel(data, function (err, result) {
+  model.tracklistModel.getTracklistByIdData(data, function (err, result) {
     if (err) return;
     if (result.length <= 0) {
-      model.tracklistModel.insertTracklistModel(data, function (err, result) {
+      model.tracklistModel.insertTracklistData(data, function (err, result) {
         if (err) return;
         res.status(200).send('track successfully inserted');
       });
@@ -38,7 +51,15 @@ const insertTrackList = (req, res) => {
   });
 }
 
+const getAllList = (req, res) => {
+  var data = req.body
+  model.playedTracksModel.getAllListData(function (err, result) {
+    if (err) return;
+    res.status(200).send(result);
+  });
+}
+
 // ----------------------------------------
 
 
-module.exports = { home, tracklist, removeTrack, insertTrackList, getAllTrackList };
+module.exports = { home, tracklist, removeTrack, insertTrackList, getAllList, getTrackDetails, trackDetails };

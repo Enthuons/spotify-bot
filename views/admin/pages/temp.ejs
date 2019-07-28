@@ -7,15 +7,20 @@
   <% include ../partials/head %>
 </head>
 
-<body>
+<body
+style="background-image: linear-gradient(-180deg, #000, #054046f5, #000);">
   <header>
     <% include ../partials/header %>
   </header>
 
-  <div id='search-track' class="container">
+  <div id='search-track' class="container" style="
+  background-image: linear-gradient(#111, #111, #000303);
+  box-shadow: 0px 1px 15px #111;
+  border: none;"
+  >
     <div class="row">
       <div class="offset-md-1 col-md-10 login-form-1">
-        <h3>Tracks to play</h3>
+        <h3 style="color: #f1f1f1; text-shadow: 0px 0px 4px #ab0606;">Tracks to play</h3>
         <p id="errorMsg" style="
         float: left;
         font-size: 21px;
@@ -29,7 +34,13 @@
           <i class="fa fa-plus"></i> Add new tracks
         </button>
 
-        <div id="list-music-track" class="form-control" style="min-height: 45px;"></div>
+        <div id="list-music-track" class="form-control" style="
+        min-height: 45px;
+        background-image: linear-gradient(180deg, #111, #6d6d6d, #111);
+        border: none;
+        border: 1px solid #585656;
+        box-shadow: 0px 0px 46px #222;
+        "></div>
         <div id="nextPrevBtn" style="
           padding: 5px 0px;
           flex: 1;
@@ -105,6 +116,8 @@
 
       response.map((item, key) => {
 
+        // console.log('item : ', item);
+
         allTracklistArray.push(item);
 
         function millisToMinutesAndSeconds(millis) {
@@ -116,7 +129,7 @@
         $("#list-music-track").append(`
           <div>
             <div id="trackBody_${key}" class="card" style="height:150px; width: 100%;">
-              <div>
+              <div style="border: none; background-image: linear-gradient(-23deg, #28659a, #e87daf, yellow);">
                   <img src="${item.album_art}" style="float: left" width="150px" height="150px" alt="Track image">
                   <div style="
                   float: left;
@@ -164,17 +177,16 @@
                         <button id="trackBtn_${key}" onclick="removeTrack(${key})"  class="btn btn-danger" style="font-size: 13px; padding: 5px 6px;"><i class="fa fa-remove"></i> Remove</button>
                       </div>
                       <div style="
-                        border: 1px solid #aaa;
                         min-height: 27px;
                         margin: 0px 15px 0px 0px;
                         border-radius: 30px;
-                        background-color: #6c757d;
+                        background-color: #0c3050;
                         color: #fff;
                         font-size: 12px;
                         padding: 3px 10px;
                       ">
-                        <span style="float: left;margin-right: 8px;border-right: 1px dotted #f1f1f1;padding-right: 8px;">Total played: 0</span>
-                        <span style="float: left;margin-right: 8px;border-right: 1px dotted #f1f1f1;padding-right: 8px;">Remaining play: 100</span>
+                        <span style="float: left;margin-right: 8px;border-right: 1px dotted #f1f1f1;padding-right: 8px;">Total played: ${item.play_count}</span>
+                        <span style="float: left;margin-right: 8px;border-right: 1px dotted #f1f1f1;padding-right: 8px;">Remaining play: ${item.played_count}</span>
                         <span style="cursor: pointer;" id="trackDetails_${key}" onclick="window.location.replace('/admin/trackdetails?id=${item.track_id}')"
                         onmouseover="this.style.color='#222';" onmouseout="this.style.color='#fff';"
                         >
@@ -203,6 +215,7 @@
         url: '/admin/tracklist',
         type: "GET",
         success: function (response) {
+          // console.log('response: ', response);
           if (response.length > 0) {
             $('#errorMsg').hide();
             showSongsTrack(response);
