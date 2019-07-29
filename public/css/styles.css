@@ -53,3 +53,10 @@
 footer p{
     padding: 20px;
 }
+
+.a_tag_showmore {
+    color: #fff;
+}
+.a_tag_showmore:hover {
+    color: #000;
+}

@@ -173,12 +173,10 @@
                         font-size: 12px;
                         padding: 3px 10px;
                       ">
-                        <span style="float: left;margin-right: 8px;border-right: 1px dotted #f1f1f1;padding-right: 8px;">Total played: 0</span>
-                        <span style="float: left;margin-right: 8px;border-right: 1px dotted #f1f1f1;padding-right: 8px;">Remaining play: 100</span>
-                        <span style="cursor: pointer;" id="trackDetails_${key}" onclick="window.location.replace('/admin/trackdetails?id=${item.track_id}')"
-                        onmouseover="this.style.color='#222';" onmouseout="this.style.color='#fff';"
-                        >
-                          more &nbsp; <i class="fa fa-angle-double-right"></i>
+                        <span style="float: left;margin-right: 4px;border-right: 1px dotted #f1f1f1;padding-right: 4px;">Total played: ${item.played_count}</span>
+                        <span style="float: left;margin-right: 4px;border-right: 1px dotted #f1f1f1;padding-right: 4px;">Remaining play: ${item.play_count - item.played_count}</span>
+                        <span style="cursor: pointer;" id="trackDetails_${key}">
+                         <a class = "a_tag_showmore" href="/admin/trackdetails?id=${item.track_id}"> more <i class="fa fa-angle-double-right"></i> </a>
                         </span>
                       </div>
                   </div>

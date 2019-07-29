@@ -6,3 +6,4 @@ npm-debug.log
 config.json
 cookies.json
 core
+cookies_*.json

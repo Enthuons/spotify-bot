@@ -159,13 +159,13 @@
 
     if (response.playDetails.length > 0) {
 
-      var unique_date = [...new Set(response.playDetails.map(item => item.date))];
+      // var unique_date = [...new Set(response.playDetails.map(item => item.date))];
 
       response.playDetails.map((item) =>  {
         // var a = unique_date.indexOf(item.date);
         $("#track-details tbody").append(`
           <tr>
-            <td>${item.date.slice(0, 10)}</td>
+            <td>${item.date ? item.date.slice(0, 10): ''}</td>
             <td>${item.play_count}</td>
           </tr>
         `);
