@@ -6,6 +6,7 @@
 <head>
   <% include ../partials/head %>
   <!-- <script>var track_id = window.location.search.split("=")[1];</script> -->
+ 
 </head>
 
 <body>
@@ -82,8 +83,9 @@
 
   <script>
   var response = {};
+  var track_id = window.location.search.split("=")[1]; 
+
   step1 = () => {
-    var track_id = window.location.search.split("=")[1];
     $.ajax({
       url: '/admin/trackdetails',
       type: "POST",
@@ -102,6 +104,47 @@
 
   step2 = (response) => {
     var data = response.trackDetails[0];
+
+    $(document).ready(function () {
+    $('#editButton').on('click', () => {
+        $('#editButton').hide();
+        $('#updateButton').show();
+        $('#cancelButton').show();
+        $('#inputField > input').css({'border-bottom': '1px solid black', 'color': '#104fdc'});
+        $("#inputField > input").attr('disabled', false);
+      });
+
+      $('#cancelButton').on('click', () => {
+        $('#editButton').show();
+        $('#updateButton').hide();
+        $('#cancelButton').hide();
+        $("#inputField > input").val(data.play_count);
+        $("#inputField > input").attr('disabled', true);
+        $('#inputField > input').css({'border': 'none', 'color': '#555'});
+      });
+
+      $('#updateButton').on('click', () => {
+        var data = {
+          play_count: $("#inputField > input").val(),
+          track_id: track_id,
+        }
+        
+        $.ajax({
+          url: '/admin/updatecount',
+          type: "POST",
+          data: data,
+          success: function (response) {
+          alert('Play count updated successfully');
+          location.reload();
+          },
+          error: function (error) {
+          console.log('ERROR from gettrackdetails', error);
+          }
+        });
+
+
+      });
+    });
 
     function millisToMinutesAndSeconds(millis) {
       var minutes = Math.floor(millis / 60000);
@@ -149,6 +192,26 @@
                     <source src="${data.preview_url}">
                     Your browser does not support the audio tag.
                   </audio>
+                  
+                  <div style="padding: 2px 6px">
+                    <span>
+                      Total play count:
+                    </span>
+                    <span id="inputField" style="display: inline-block;">
+                      <input type="text" value="${data.play_count}" disabled style="width: 60px;
+                      border: none;
+                      padding: 0px 6px;">
+                    </span>
+                    <span id="editButton" style="color: #2d84db; cursor: pointer;">
+                      Edit
+                    </span>
+                    <span id="updateButton"style="color: #2d84db; cursor: pointer; display: none">
+                      Update
+                    </span>
+                    <span id="cancelButton" style="color: #f44; cursor: pointer; display: none">
+                      Cancel
+                    </span>
+                  </div>
                   
               </div>
           </div>

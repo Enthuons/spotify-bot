@@ -82,7 +82,8 @@ const playTracks = () => {
         --runningBot;
       }
     } else {
-      if (tempArray.length == 0) getNewMusicTrack();
+      console.log('Unknown ERROR 103');
+      // if (tempArray.length == 0) getNewMusicTrack();
     }
   }
 

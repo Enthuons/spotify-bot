@@ -33,19 +33,13 @@ const removeTrackData = (data, callback) => {
   });
 }
 
-// const getAllPendingTracklistData = (callback) => {
-//   var sql = `SELECT * FROM tracklist WHERE pending = true`;
-//   db.query(sql, function (err, result) {
-//     if (err) { console.log('ERROR from database:', err); callback(err,null); }
-//     callback(null, result);
-//   });
-// }
+const updatePlayCountData = (data, callback) => {
+  console.log('data____: ',data);
+  var sql = `UPDATE tracklist SET play_count= ${data.play_count} WHERE track_id = '${data.track_id}'`;
+  db.query(sql, function (err, result) {
+    if (err) { console.log('ERROR from database:', err); callback(err,null); }
+    callback(null, result);
+  });
+}
 
-// const updateTracklistCompleteData = (data, callback) => {
-//   db.query(`UPDATE tracklist SET pending=false WHERE track_id = '${data.track_id}'`, function (err, result) {
-//     if (err) { console.log('ERROR from database:', err); callback(err,null); }
-//     if (result) callback(null, result);
-//   });
-// }
-
-module.exports = { insertTracklistData, getAllTrackListData, removeTrackData, getTracklistByIdData };
+module.exports = { insertTracklistData, getAllTrackListData, removeTrackData, getTracklistByIdData, updatePlayCountData };

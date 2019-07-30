@@ -56,7 +56,7 @@ const SpotifyPlayer = {
       console.log(e);
     } finally {
       cookies = await driver.manage().getCookies();
-      // fs.writeFile(`cookies_${botID}.json`, JSON.stringify(cookies), 'utf8', () => console.log('cookies saved'));
+      fs.writeFile(`cookies_${botID}.json`, JSON.stringify(cookies), 'utf8', () => console.log('cookies saved'));
       await driver.quit();
       callback('done');
     }

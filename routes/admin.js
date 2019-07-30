@@ -23,7 +23,7 @@ router.get('/addtracklist', admin.dashboard.home);
 
 router.get('/trackdetails', admin.dashboard.trackDetails);
 router.post('/trackdetails', admin.dashboard.getTrackDetails);
-
+router.post('/updatecount', admin.dashboard.updatePlaycount);
 
 router.post('/tracklist', admin.dashboard.insertTrackList);
 router.get('/tracklist', admin.dashboard.getAllList);

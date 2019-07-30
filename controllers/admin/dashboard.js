@@ -59,7 +59,16 @@ const getAllList = (req, res) => {
   });
 }
 
+
+const updatePlaycount = (req, res) => {
+  var data = req.body
+  model.tracklistModel.updatePlayCountData(data, function (err, result) {
+    if (err) return;
+    res.status(200).send(result);
+  });
+}
+
 // ----------------------------------------
 
 
-module.exports = { home, tracklist, removeTrack, insertTrackList, getAllList, getTrackDetails, trackDetails };
+module.exports = { home, tracklist, removeTrack, insertTrackList, getAllList, getTrackDetails, trackDetails, updatePlaycount };

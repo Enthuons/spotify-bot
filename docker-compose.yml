@@ -8,5 +8,5 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
-    command: ["nodemon", "index.js"]
+    command: ["npm", "run", "dev"]
     network_mode: host
