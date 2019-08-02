@@ -8,7 +8,7 @@ const track = (req, res) => {
       res.status(200).send(data);
     })
     .catch(function (err) {
-      console.log(err);
+      console.log(new Date(), err);
     });
 }
 

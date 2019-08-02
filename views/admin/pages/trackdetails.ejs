@@ -95,7 +95,7 @@
           step2(response);
       },
       error: function (error) {
-        console.log('ERROR from gettrackdetails', error);
+        console.log(new Date(), 'ERROR from gettrackdetails', error);
       }
     });
   }
@@ -138,7 +138,7 @@
           location.reload();
           },
           error: function (error) {
-          console.log('ERROR from gettrackdetails', error);
+          console.log(new Date(), 'ERROR from gettrackdetails', error);
           }
         });
 

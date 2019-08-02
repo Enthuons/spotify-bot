@@ -1,9 +1,10 @@
 const SpotifyPlayer = require('./SpotifyPlayer');
 const model = require('../models');
+const dbconfig = require('../config.json');
 
 var trackListArray = [];
 var tempArray = [];
-var maxBot = 3;
+var maxBot = dbconfig.botDetails.totalBot;
 var runningBot = 0;
 var botCount = 0;
 var pendingFlag = false;
@@ -30,7 +31,7 @@ function getAllPendingList(callback) {
         if (pendingFlag) {
           callback(null, result);
         } else {
-          console.log('All tracks are played for today, retry in 5 min');
+          console.log(new Date(), 'All tracks are played for today, retry in 5 min');
           setTimeout(() => {
             getAllPendingList(callback);
           }, 5 * 60 * 1000);
@@ -38,7 +39,7 @@ function getAllPendingList(callback) {
       }, 500);
 
     } else {
-      console.log('Tracklist empty, please add track in tracklist');
+      console.log(new Date(), 'Tracklist empty, please add track in tracklist');
       setTimeout(() => {
         getAllPendingList(callback);
       }, 5 * 60 * 1000);
@@ -56,9 +57,11 @@ const playTracks = () => {
   function start(botID) {
     if (trackListArray.length > 0) {
       if (trackListArray[0].play_count > 0) {
-        console.log(`Now playing track_id ${trackListArray[0].track_id} and playing track number: ${trackListArray[0].play_count}`);
-        tempArray.push(trackListArray[0].track_id);
         --trackListArray[0].play_count;
+        tempArray.push(trackListArray[0].track_id);
+        console.log(new Date(), `Now playing track_id ${trackListArray[0].track_id} and playing track number: ${trackListArray[0].play_count+1}`);
+        // tempArray.push(trackListArray[0].track_id);
+        // --trackListArray[0].play_count;
         SpotifyPlayer.play(trackListArray[0].track_url, botID, function (data) {
           if (data == 'done') {
             --runningBot;
@@ -68,9 +71,9 @@ const playTracks = () => {
               date: new Date().toISOString().slice(0, 10),
             }
             model.playedTracksModel.insertTrackIntoPlayedListData(data, function (err, data) {
-              if (err) { console.log('some error occured while inserting track'); return; }
+              if (err) { console.log(new Date(), 'some error occured while inserting track'); return; }
               if (data) {
-                console.log(`track_id ${tempArray[0]} insert into played_track table`);
+                console.log(new Date(), `track_id ${tempArray[0]} insert into played_track table`);
                 tempArray.shift();
                 if (tempArray.length == 0) getNewMusicTrack();
               }
@@ -82,24 +85,23 @@ const playTracks = () => {
         --runningBot;
       }
     } else {
-      console.log('Unknown ERROR 103');
-      // if (tempArray.length == 0) getNewMusicTrack();
+      botManager('stop');
     }
   }
 
   function botManager(input) {
     if (input == 'stop') {
-      console.log('botManager stop');
+      console.log(new Date(), 'botManager stop');
       clearInterval(waitBot);
       runningBot = 0;
     }
     if (input == 'start') {
-      console.log('botManager start');
-      waitBot = setInterval(check, 1000);
+      console.log(new Date(), 'botManager start');
+      waitBot = setInterval(check, 2*1000);
       function check() {
         if (maxBot > runningBot) {
           ++runningBot;
-          console.log('bot ---> ', botCount % maxBot + 1);
+          console.log(new Date(), 'bot ---> ', botCount % maxBot + 1);
           start(botCount % maxBot + 1);
           // clearInterval(waitBot);
           ++botCount
@@ -109,13 +111,13 @@ const playTracks = () => {
   }
 
   function getNewMusicTrack() {
-    console.log('_________________________________');
+    console.log(new Date(), '_________________________________');
     var wait = setInterval(check, 1000);
     function check() {
       if (trackListArray.length == 0) {
         clearInterval(wait);
-        botManager('stop');
-        console.log('All tracks are played, need new tracks for play');
+        // botManager('stop');
+        console.log(new Date(), 'All tracks are played, need new tracks for play');
         playTracks();
       }
     }

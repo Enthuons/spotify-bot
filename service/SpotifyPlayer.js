@@ -8,7 +8,7 @@ const chrome = require('selenium-webdriver/chrome');
  
 const SpotifyPlayer = {
   play: async (musicUrl, botID, callback) => {
-    console.log("got a song to play. music_url: ", musicUrl);
+    // console.log(new Date(), "got a song to play. music_url: ", musicUrl);
     // console.log("opening: " + musicUrl);
     let cookies = [];
     try {
@@ -16,7 +16,7 @@ const SpotifyPlayer = {
       const data = fileContents.toString();
       cookies = JSON.parse(data);
     } catch (e) {
-      console.log(e);
+      console.log(new Date(), e);
     }
 
     let chromeOptions = new chrome.Options();
@@ -49,14 +49,15 @@ const SpotifyPlayer = {
       // const element = By.css("[title='Pause']");
       // const pauseButton = driver.findElement(element);
       // await driver.wait(until.elementIsVisible(pauseButton), 20000);
-      console.log("track is now started playing in headless browser");
+      console.log(new Date(), "track is now started playing in headless browser");
       await driver.sleep(45000);
-      console.log("song played for 45 seconds");
+      console.log(new Date(), "song played for 45 seconds");
     } catch (e) {
-      console.log(e);
+      console.log(new Date(), e);
     } finally {
       cookies = await driver.manage().getCookies();
-      fs.writeFile(`cookies_${botID}.json`, JSON.stringify(cookies), 'utf8', () => console.log('cookies saved'));
+      fs.writeFile(`cookies_${botID}.json`, JSON.stringify(cookies), 'utf8', () => console.log(''));
+      // fs.writeFile(`cookies_${botID}.json`, JSON.stringify(cookies), 'utf8');
       await driver.quit();
       callback('done');
     }

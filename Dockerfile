@@ -36,6 +36,7 @@ WORKDIR /app
 
 # setup project files
 COPY package.json .
+COPY package-lock.json .
 
 # install project dependencies
 RUN npm install
