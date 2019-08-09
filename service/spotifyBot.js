@@ -1,10 +1,10 @@
 const SpotifyPlayer = require('./SpotifyPlayer');
 const model = require('../models');
-const dbconfig = require('../config.json');
+const config = require('../config.json');
 
 var trackListArray = [];
 var tempArray = [];
-var maxBot = dbconfig.botDetails.totalBot;
+var maxBot = config.bot_count;
 var runningBot = 0;
 var botCount = 0;
 var pendingFlag = false;
@@ -63,6 +63,7 @@ const playTracks = () => {
         // tempArray.push(trackListArray[0].track_id);
         // --trackListArray[0].play_count;
         SpotifyPlayer.play(trackListArray[0].track_url, botID, function (data) {
+          console.log('x');
           if (data == 'done') {
             --runningBot;
             data = {
@@ -97,7 +98,7 @@ const playTracks = () => {
     }
     if (input == 'start') {
       console.log(new Date(), 'botManager start');
-      waitBot = setInterval(check, 2*1000);
+      waitBot = setInterval(check, 1000);
       function check() {
         if (maxBot > runningBot) {
           ++runningBot;

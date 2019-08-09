@@ -1,6 +1,6 @@
-const configs = require('../config.json');
-const environment = process.env.ENV || 'development';
-const config = configs[environment];
+const config = require('../config.json');
+// const environment = process.env.ENV || 'development';
+// const config = configs[environment];
 
 const fs = require('fs');
 const {Builder, By, Key, until} = require('selenium-webdriver');
@@ -20,7 +20,7 @@ const SpotifyPlayer = {
     }
 
     let chromeOptions = new chrome.Options();
-    chromeOptions.addArguments("--headless");
+    // chromeOptions.addArguments("--headless");
     chromeOptions.addArguments("--no-sandbox");
 
     const driver = await new Builder()
@@ -32,9 +32,9 @@ const SpotifyPlayer = {
         // open the login page with next url to player with track
         await driver.get('https://accounts.spotify.com/en/login/?continue=' + musicUrl);
         // set username in text field
-        await driver.findElement(By.id('login-username')).sendKeys(config.spotify_username);
+        await driver.findElement(By.id('login-username')).sendKeys(config.spotify_accounts[botID-1].username);
         // set password in text field
-        await driver.findElement(By.id('login-password')).sendKeys(config.spotify_password, Key.RETURN);
+        await driver.findElement(By.id('login-password')).sendKeys(config.spotify_accounts[botID-1].password, Key.RETURN);
       } else {
         // Open spotify home page
         await driver.get('https://www.spotify.com/in/');
@@ -50,7 +50,7 @@ const SpotifyPlayer = {
       // const pauseButton = driver.findElement(element);
       // await driver.wait(until.elementIsVisible(pauseButton), 20000);
       console.log(new Date(), "track is now started playing in headless browser");
-      await driver.sleep(45000);
+      await driver.sleep(50*1000);
       console.log(new Date(), "song played for 45 seconds");
     } catch (e) {
       console.log(new Date(), e);

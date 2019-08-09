@@ -2,9 +2,6 @@
 const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
-
-const bot = require('./service/bot')
-
 const routes = require('./routes');
 
 const app = express();
@@ -31,8 +28,6 @@ const server = app.listen(PORT, HOST, () => {
   const host = server.address().address;
   const port = server.address().port;
   console.log(`server running at http://${host}:${port}`);
-  bot.playTracks();
-  console.log(new Date(), 'Start playing tracks... ');
 });
 
 

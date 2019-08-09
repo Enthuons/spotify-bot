@@ -1,8 +1,24 @@
 {
-    "development": {
-        "spotify_client_id": "",
-        "spotify_client_secret": "",
-        "spotify_username": "",
-        "spotify_password": ""
-    }
+    "database": {
+        "host": "<HOST_IP>",
+        "user": "<DATABASE_USERNAME",
+        "password": "<DATABASE_PASSWORD>",
+        "database": "<DATABASE_NAME>"
+    },
+    "spotify_keys": {
+        "client_id": "<CLIENT_ID>",
+        "client_secret": "<CLIENT_SECRET>"
+    },
+    "bot_count": 1,
+    "spotify_accounts": [
+        {
+            "username": "<SPOTIFY_USERNAME>",
+            "password": "<SPOTIFY_PASSWORD>"
+        },
+        {
+            "username": "<SPOTIFY_USERNAME>",
+            "password": "<SPOTIFY_PASSWORD>"
+        }
+               
+    ]
 }
