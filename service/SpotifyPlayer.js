@@ -20,7 +20,7 @@ const SpotifyPlayer = {
     }
 
     let chromeOptions = new chrome.Options();
-    // chromeOptions.addArguments("--headless");
+    chromeOptions.addArguments("--headless");
     chromeOptions.addArguments("--no-sandbox");
 
     const driver = await new Builder()
