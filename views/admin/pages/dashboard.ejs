@@ -6,14 +6,18 @@
 <head>
   <% include ../partials/head %>
   <script>
-   function selectTrackBtn(key) {
-        for (i = 0; i < 20; i++) {
-          $('#trackBtn_'+i).css('background-color', '#ddd');
-          $('#trackBody_'+i).css('background-color', '');
-        }
-        $('#trackBtn_'+key).css('background-color', '#13cc45');
-        $('#trackBody_'+key).css('background-color', '#d3fba8');
+    removeSelection = () =>  {
+      for (i = 0; i < 20; i++) {
+        $('#trackBtn_'+i).css('background-color', '#ddd');
+        $('#trackBody_'+i).css('background-color', '');
       }
+    }
+    selectTrackBtn = (key) => {
+      selectedSong = key;
+      removeSelection();
+      $('#trackBtn_'+key).css('background-color', '#13cc45');
+      $('#trackBody_'+key).css('background-color', '#d3fba8');
+    }
   </script>
 </head>
 
@@ -27,6 +31,14 @@
     <div class="row">
       <div class="offset-md-1 col-md-10 login-form-1">
         <h3>Add a song to play</h3>
+        <div class="form-group" style="height: 36px;">
+            <button id = "onClickDashboard" class="btn btn-info" style="
+              float: right;
+              font-size: 13px;
+              margin: 5px 5px 5px 5px;">
+              <i class="fa fa-list"></i> Go to dashboard
+            </button>
+        </div>
         <form method="POST" onsubmit="return false;">
           <div class="form-group">
             <div style="width: 90%; float: left; margin-right: 5px;">
@@ -39,12 +51,13 @@
           <div id='search_results' class="form-group" style="display: none">
             <div id="list-music-track" class="form-control">
             </div>
-            <div id="nextPrevBtn" style="padding: 5px 0px;
-                        flex: 1;
-                        flex-direction: row;
-                        align-items: flex-end;
-                        float: right;
-                        display: none;" >
+            <div id="nextPrevBtn" style="
+                padding: 5px 0px;
+                flex: 1;
+                flex-direction: row;
+                align-items: flex-end;
+                float: right;
+                display: none;" >
                 <input style="width: 120px; background-color: #ecddb1f0; border: 1px solid #e0a638; margin: 0px 10px 0px 10px;" class="btn" type="button" id="prvBtn" value="Prev">
                 <span id="pageNo" style="
                 border: 1px solid #222;
@@ -56,7 +69,6 @@
                 ">  </span>
                 <input style="width: 120px; background-color: #ecddb1f0; border: 1px solid #e0a638; margin: 0px 10px 0px 10px;" class="btn" type="button" id="nxtBtn" value="Next">
             </div>
-            
           </div>
 
           <div class="form-group">
@@ -83,9 +95,10 @@
   </footer>
 
   <script>
-    var selectedSongUrl = null;
     var nextPageUrl = null;
     var prevPageUrl = null;
+    var trackListArray = [];
+    var selectedSong = null;
 
     function searchTracks(url) {
       var search = $('#search').val();
@@ -113,18 +126,18 @@
             return;
           }
           showSongsTrack(response);
+          // console.log(response.items[0]);
         },
         error: function (error) {
           console.error(error);
-          $("#list-music-track").html(`
-            <h5 class="text-center alert-danger">Unknown error occured</h5>
-          `);
+          $("#list-music-track").html(`<h5 class="text-center alert-danger">Unknown error occured</h5>`);
         }
       });
     }
 
     function showSongsTrack(response) {
-      selectedSongUrl = null;
+      trackListArray = [];
+      selectedSong = null;
       prevPageUrl = response.previous;
       nextPageUrl = response.next;
       $('#pageNo').html(Math.floor(response.offset/20)+1);
@@ -157,7 +170,25 @@
           var minutes = Math.floor(millis / 60000);
           var seconds = ((millis % 60000) / 1000).toFixed(0);
           return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
-        }        
+        }     
+        
+        data = {
+          track_id: value.id, 
+          track_name: value.name.split("'").join("\\'"),
+          album_id: value.album.id,
+          album_url: value.album.external_urls.spotify,
+          album_name: value.album.name.split("'").join("\\'"),
+          artist_name: artistName.join(', '),
+          release_date: value.album.release_date,
+          duration_ms: value.duration_ms,
+          track_url: value.external_urls.spotify,
+          // external_ids: value.external_ids.isrc,
+          popularity: value.popularity,
+          album_art: value.album.images[1].url,
+          preview_url: value.preview_url,
+        };
+
+        trackListArray.push(data);
 
         $("#list-music-track").append(`
           <div>
@@ -199,7 +230,7 @@
                         Your browser does not support the audio tag.
                       </audio>
                       <div style="height: 40px">
-                        <input type="button" id="trackBtn_${key}" onclick="function hi(){selectedSongUrl = '${value.external_urls.spotify}'; selectTrackBtn(${key});};hi();"  class="btn" style="width: 80px;" value="select" />
+                        <input type="button" id="trackBtn_${key}" onclick="selectTrackBtn(${key})"  class="btn" style="width: 80px;" value="select" />
                         <input type="button" onclick="window.open('${value.external_urls.spotify}')" class="btn" style="width: 125px; background-color: #2e829b; color: white;" value="Play in Spotify" />
                       </div>
                   </div>
@@ -218,30 +249,55 @@
 
     function submitTrack() {
       var count = $("#play_count").val();
-      if (!selectedSongUrl) {
+      if (!trackListArray.length > 0) {
+        alert('Please search a track');
+        return;
+      } else if (selectedSong == null) {
         alert('Please select a track');
         return;
-      }
-      if (!count) {
+      } else if (!count) {
         alert('Enter how many times to play');
         return;
+      } else {
+        trackListArray[selectedSong].play_count = count;
+        
+        // play track api
+
+        // $.ajax({
+        //   url: '/api/play-track',
+        //   type: "POST",
+        //   data: {
+        //     track: trackListArray[selectedSong].track_url,
+        //     count
+        //   },
+
+        //   success: function (response) { 
+        //     alert(response);
+        //     $('#successMsg').show();
+        //     $('#successMsg').html(response);
+        //   },
+        //   error: function (error) {
+        //     console.log(error);
+        //   }
+        // });
+
+        // save tracklist api
+
+        $.ajax({
+          url: '/admin/tracklist',
+          type: "POST",
+          data: trackListArray[selectedSong],
+          success: function (response) { 
+            if (response =='track successfully inserted') alert('Track successfully added');
+            if (response =='Already Exist') alert('Track already in list');
+            selectedSong = null;
+            removeSelection();
+          },
+          error: function (error) {
+            console.log(new Date(), 'ERROR from submit tracklist',error);
+          }
+        });
       }
-      $.ajax({
-        url: '/api/play-track',
-        type: "POST",
-        data: {
-          track: selectedSongUrl,
-          count
-        },
-        success: function (response) { 
-          alert(response);
-          $('#successMsg').show();
-          $('#successMsg').html(response);
-        },
-        error: function (error) {
-          console.log(error);
-        }
-      });
     }
 
     $(document).ready(function () {
@@ -249,13 +305,12 @@
 
       $("#submit_button").on('click', submitTrack);
       
-      $("#nxtBtn").on('click', () => {
-        searchTracks(nextPageUrl);
-      });
+      $("#nxtBtn").on('click', () => searchTracks(nextPageUrl));
       
-      $("#prvBtn").on('click', () => {
-        searchTracks(prevPageUrl);
-      });
+      $("#prvBtn").on('click', () => searchTracks(prevPageUrl));
+      
+      $('#onClickDashboard').on('click', () => window.location.replace(`/admin`));
+      
     });
   </script>
 

@@ -1,12 +1,12 @@
-const configs = require('../config.json');
-const environment = process.env.ENV || 'development';
-const config = configs[environment];
+const config = require('../config.json');
+// const environment = process.env.ENV || 'development';
+// const config = configs[environment];
 
 const Spotify = require('node-spotify-api');
  
 const spotify = new Spotify({
-  id: config.spotify_client_id,
-  secret: config.spotify_client_secret
+  id: config.spotify_keys.client_id,
+  secret: config.spotify_keys.client_secret
 });
 
 searchTrack = (query, url) => {

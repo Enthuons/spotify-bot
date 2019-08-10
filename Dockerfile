@@ -36,9 +36,7 @@ WORKDIR /app
 
 # setup project files
 COPY package.json .
+COPY package-lock.json .
 
 # install project dependencies
 RUN npm install
-
-# install nodemon for development for hot reload
-RUN npm install -g nodemon

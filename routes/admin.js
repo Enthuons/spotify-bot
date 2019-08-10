@@ -16,8 +16,18 @@ router.use('/', (req, res, next) => {
   next();
 });
 
-router.get('/', admin.dashboard.home);
+router.get('/', admin.dashboard.tracklist);
 router.get('/login', admin.auth.login);
 router.post('/login', admin.auth.login);
+router.get('/addtracklist', admin.dashboard.home);
+
+router.get('/trackdetails', admin.dashboard.trackDetails);
+router.post('/trackdetails', admin.dashboard.getTrackDetails);
+router.post('/updatecount', admin.dashboard.updatePlaycount);
+
+router.post('/tracklist', admin.dashboard.insertTrackList);
+router.get('/tracklist', admin.dashboard.getAllList);
+router.post('/removetrack', admin.dashboard.removeTrack);
+
 
 module.exports = router;

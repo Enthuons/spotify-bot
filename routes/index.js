@@ -6,7 +6,7 @@ const apiRoutes = require('./api');
 
 // middleware to log request time
 router.use('/', (req, res, next) => {
-    console.log('Request:', req.url, new Date());
+    console.log(new Date(), 'Request:', req.url);
     next()
 });
 
@@ -25,7 +25,6 @@ router.get('/logout', (req, res) => {
 router.use('/admin', adminRoutes);
 // api routes
 router.use('/api', apiRoutes);
-
 // 404 route
 router.get('*', (req, res) => {
     res.status(404).send('NOT FOUND');

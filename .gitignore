@@ -5,3 +5,5 @@ npm-debug.log
 .DS_Store
 config.json
 cookies.json
+core
+cookies_*.json
