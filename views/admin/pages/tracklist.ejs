@@ -22,6 +22,12 @@
         margin: 5px 5px 5px 5px;
         color: #b30a0ab0;
         padding: 1px 10px;"></p>
+        <button id="onClickBotDashboard" class="btn btn-info" style="
+         float: right;
+         font-size: 13px;
+         margin: 5px 5px 5px 5px;">
+         <i class="fa fa-bullseye"></i> Bot dashboard
+       </button>
         <button id="onClickAddNewTrack" class="btn btn-info" style="
           float: right;
           font-size: 13px;
@@ -219,6 +225,7 @@
 
     $(document).ready(function () {
       $('#onClickAddNewTrack').on('click', () => window.location.replace(`/admin/addtracklist`));
+      $('#onClickBotDashboard').on('click', () => window.location.replace(`/admin/botdashboard`));
     });
 
   </script>

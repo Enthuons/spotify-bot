@@ -13,6 +13,7 @@ const trackDetails = (req, res) => {
   res.render('admin/pages/trackdetails');
 }
 
+
 const getTrackDetails = (req, res) => {
   var data = req.body
   var response = {};

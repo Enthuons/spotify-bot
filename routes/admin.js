@@ -29,5 +29,13 @@ router.post('/tracklist', admin.dashboard.insertTrackList);
 router.get('/tracklist', admin.dashboard.getAllList);
 router.post('/removetrack', admin.dashboard.removeTrack);
 
+router.get('/botdashboard', admin.botdashboard.botDashboard);
+router.post('/botdashboard', admin.botdashboard.getListCount);
+router.post('/getmusic', admin.botdashboard.getTrackListCount);
+router.post('/getbot', admin.botdashboard.getBotListCount);
+router.post('/getplaydetails', admin.botdashboard.getPlayDetailsCount);
+
+
+
 
 module.exports = router;
