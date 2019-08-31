@@ -7,3 +7,5 @@ config.json
 cookies.json
 core
 cookies_*.json
+scratch/
+ecosystem.config.js

@@ -33,17 +33,34 @@
 
         </button>
         <div id="list-music-track" class="form-control" style="min-height: 45px;"></div>
-        <div id="track-details" class="form-control" style="min-height: 230px; max-height: 600px">
-          <div class="alert alert-lite" role="alert" style="text-align: center; caption-side: top;">Bot Status </div>
+        <div id="track-details" class="form-control" style="min-height: 230px; max-height: 1200px;">
+          <div class="alert alert-lite" role="alert" style="text-align: center; ">Bot Status </div>
 
-          <!-- <div class="alert alert-success" role="alert" style="text-align: center; caption-side: top;">Bot status: All bots are running</div> -->
-          <div class="alert alert-danger" role="alert" style="text-align: center; caption-side: top; display: none">Bot status: Some Error occured. <a href="#" class="alert-link">Click here</a> </div>
+
+
+
+          <div id="botstatus" class="alert alert-success" role="alert" style="text-align: center;"><span></span><span onclick="$('#botstatusDetails ').toggle(); $('#systemResponse ').toggle(); $('#system ').toggle(); return false;" class="alert-link" style="text-decoration: underline; cursor: pointer;">Click here</span> </div>
+          <div id="botstatusDetails" class="alert alert-lite" style="display: none" role="alert" > status: </div>
+          <div id="system" class="form-control" style="height: 108px; display: none; width: 88%; border: none; margin: auto;"> 
+            <button onclick="systemTask('getInfo')" class="btn btn-info" style="margin: 1% 1% 1% 1%;  width: 31%; float: left;">Get Server Info</button>
+            <button onclick="systemTask('restart_bot')" class="btn btn-warning" style="margin: 1% 1% 1% 1%;  width: 31%; float: left;">Restart bot</button>
+            <button onclick="systemTask('getTempfileCount')" class="btn btn-primary" style="margin: 1% 1% 1% 1%;  width: 31%; float: left;">Get Temp File</button>
+            
+            <button onclick="systemTask('clearTempFile')" class="btn btn-secondary" style="margin: 1% 1% 1% 1%;  width: 31%; float: left;">Clear Temp File</button>
+            <button onclick="systemTask('mysqlStatus')" class="btn btn-success" style="margin: 1% 1% 1% 1%;  width: 31%; float: left;">Check Mysql Status</button>
+            <button onclick="systemTask('restart_mysql')" class="btn btn-danger" style="margin: 1% 1% 1% 1%;  width: 31%; float: left;">Restart Mysql</button>
+          </div>
+          <div id="systemResponse" class="form-control" style=" display: none; margin-top: 10px; background-color: #222; color: #aaa; padding: 20px; max-height: 300px; min-height: 120px; overflow: auto;">
+            <h4 style="text-align: center">Response From Server</h4>
+            <pre id="systemOutput" style="color: #cccfd0"></pre>
+          </div>
+
           <hr>
           <input id='date' class="form-control" style=" float: left; width: 40%; margin-right: 10px; height: 40px; margin-bottom: 10px" type="date" value="12/12/2019" name="Selectdate">
-            
+
           <button id="sortByToggleButton" type="button" class="btn btn-outline-info">Sort by tracks</button>
             
-          <div id="message" class="alert-light" style="text-align: center; caption-side: top;">
+          <div id="message" class="alert-light" style="text-align: center; ">
             <hr>Please select date to show bot result
           </div>
 
@@ -86,7 +103,7 @@
                               <thead>
                                 <tr>
                                   <th>Start Play</th>
-                                  <!-- <th>End Track</th> -->
+                                  <th>End Track</th>
                                   <th>Status</th>
                                 </tr>
                               </thead>
@@ -131,9 +148,53 @@
   <script>
     var response = {};
 
-    // var musicList = [];
-    // var botList = [];
+    systemTask = (data) => {
+      $('#systemOutput').html('')
+      $.ajax({
+        url: '/admin/servertask',
+        type: "POST",
+        data: { command: data },
+        success: function (response) {
+          console.log('res : ', response);
 
+          // $('#systemResponse').html(response)
+          $('#systemOutput').html(response)
+          
+        },
+        error: function (error) {
+          console.error(error);
+        }
+      });
+    }
+
+    getBotStatus = () => {
+      $.ajax({
+        url: '/admin/botstatus',
+        type: "POST",
+        success: function (response) {
+          $('#botstatus').show();
+          if (response.type == 'success') {
+            $('#botstatus').removeClass('alert-success alert-danger alert-warning').addClass('alert-success');
+            $($('#botstatus').children()[0]).html('Bot status: All bots are running ');
+          }
+          if (response.type == 'error') {
+            $('#botstatus').removeClass('alert-success alert-danger alert-warning').addClass('alert-danger');
+            $($('#botstatus').children()[0]).html('Bot status: Some Error occured. Bot stop running ');
+          }
+          if (response.type == 'warning') {
+            $('#botstatus').removeClass('alert-success alert-danger alert-warning').addClass('alert-warning');
+            $($('#botstatus').children()[0]).html('Bot status: Bots are idle ');
+          }
+          $('#botstatusDetails').html(response.details);
+        },
+        error: function (error) {
+          console.error(error);
+        }
+      });
+    }
+
+    setInterval(() => {getBotStatus();}, 1000)
+  
     getData = (date = '') => {
       if ($('#date').val() == '') return;
       $.ajax({
@@ -165,7 +226,6 @@
         type: "POST",
         data: { date: $('#date').val() },
         success: function (response) {
-          // console.log(response);
           $('#musicListDiv').html('');
           if (response.length < 1) {
             $('#musicList').children().hide();
@@ -257,22 +317,27 @@
 
     showPlayList = (response) => {
       response.map((item, i) => {
+        // console.log(' item.created_at : ',  item.created_at);
+        // console.log(' item.updated_at : ',  item.updated_at);
         var str = item.created_at;
         var res = str.split("T")
         var startTime = res[1].slice(0, 8);
 
         var str = item.updated_at;
         var res = str.split("T")
-        var endTime = res[1].slice(0, 8);
+        var endTime = item.created_at != '' && item.created_at == item.updated_at ?  '  -- : -- ' : res[1].slice(0, 8);
+      
+        var status = item.created_at != '' && item.created_at == item.updated_at ? 'Running' : 'Done';
 
-        // status = Done, Running, Error
-        var status = !item.updated_at || item.updated_at == '' ? 'Running' : 'Done';
+        console.log(' item.created_at : ',  startTime);
+        console.log(' item.updated_at : ',  endTime);
 
         $('#playListDiv').find('tbody').append(`
           <tr>
             <td>${startTime}</td>
+            <td>${endTime}</td>
             <td>
-                <span class="badge badge-primary" style="padding: 6px 6px;">${status}</span>  
+                <span class="badge ${status == 'Running' ? 'badge-info' : 'badge-primary'}" style="padding: 6px 6px;">${status}</span>  
             </td>
           </tr>
         `);
@@ -325,22 +390,17 @@
 
       $('#date').on('change', () => {
         const date = $('#date').val();
-        // if ($('#sortByToggleButton').html() == 'Sort by tracks') {
         getData(date);
-        // } else {
         getMusicByDate(date);
-        // }
       });
-
-      // $("select.selectBot").change(function(){
-      //     var selectedBot = $(this).children("option:selected").val();
-      //     console.log('selectedBot :', selectedBot);
-      // });
-
-
-
+      
+      $('#date').change().val(new Date().toISOString().slice(0, 10));
+      getData(date);
+      getMusicByDate(date);
+      
       $('#sortByToggleButton').on('click', () => {
         const date = $('#date').val();
+        if (date == null) return;
         if ($('#sortByToggleButton').html() == 'Sort by tracks') {
           $('#sortByToggleButton').html('Sort by bots');
           getData(date);
@@ -348,16 +408,11 @@
           $('#sortByToggleButton').html('Sort by tracks');
           getMusicByDate(date);
         }
-        if (date != '') {
           $('#botList').toggle();
           $('#musicList').toggle();
-        }
-
       });
-      // $('#botListDiv').parent().show()
     });
 
-    // $('#musicListDiv').children()[0]
 
   </script>
 

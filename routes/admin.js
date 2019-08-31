@@ -35,6 +35,8 @@ router.post('/getmusic', admin.botdashboard.getTrackListCount);
 router.post('/getbot', admin.botdashboard.getBotListCount);
 router.post('/getplaydetails', admin.botdashboard.getPlayDetailsCount);
 
+router.post('/botstatus', admin.botdashboard.getBotStatus);
+router.post('/servertask', admin.botdashboard.serverTask);
 
 
 

@@ -2,12 +2,18 @@ const SpotifyPlayer = require('./SpotifyPlayer');
 const model = require('../models');
 const config = require('../config.json');
 
+if (typeof localStorage === "undefined" || localStorage === null) {
+  var LocalStorage = require('node-localstorage').LocalStorage;
+  localStorage = new LocalStorage('./scratch');
+}
+
 var trackListArray = [];
 var tempArray = [];
 var maxBot = config.bot_count;
 var runningBot = 0;
 var botCount = 0;
 var pendingFlag = false;
+var status = '';
 
 function getAllPendingList(callback) {
   trackListArray = [];
@@ -31,7 +37,10 @@ function getAllPendingList(callback) {
         if (pendingFlag) {
           callback(null, result);
         } else {
-          console.log(new Date(), 'All tracks are played for today, retry in 5 min');
+          status = 'All tracks are played for today, retry in 5 min';
+          const s =  { type: 'warning', details: status };
+          localStorage.setItem('botstatus', JSON.stringify(s));
+          console.log(new Date(), status);
           setTimeout(() => {
             getAllPendingList(callback);
           }, 5 * 60 * 1000);
@@ -39,7 +48,10 @@ function getAllPendingList(callback) {
       }, 500);
 
     } else {
-      console.log(new Date(), 'Tracklist empty, please add track in tracklist');
+      status = 'Tracklist empty, please add track in tracklist';
+      const s =  { type: 'success', details: status };
+      localStorage.setItem('botstatus', JSON.stringify(s));
+      console.log(new Date(), status);
       setTimeout(() => {
         getAllPendingList(callback);
       }, 5 * 60 * 1000);
@@ -58,27 +70,70 @@ const playTracks = () => {
     if (trackListArray.length > 0) {
       if (trackListArray[0].play_count > 0) {
         --trackListArray[0].play_count;
-        tempArray.push(trackListArray[0].track_id);
-        console.log(new Date(), `Now playing track_id ${trackListArray[0].track_id} and playing track number: ${trackListArray[0].play_count+1}`);
-        // tempArray.push(trackListArray[0].track_id);
-        // --trackListArray[0].play_count;
+
+        data = {
+          track_id: trackListArray[0].track_id,
+          bot_id: `spotify_bot-${botID}`,
+          // date: new Date().toISOString().slice(0, 10),
+        }
+
+        model.playedTracksModel.insertTrackIntoPlayedListData(data, function (err, data) {
+          if (err) { 
+            status = `spotify_bot-${botID} some error occured while inserting track ${err}`
+            localStorage.setItem('botstatus','error');
+            console.log(new Date(), status);
+            return; 
+          }
+          if (data) {
+            status = `spotify_bot-${botID} track_id ${trackListArray[0].track_id} insert startPlayTime into played_track table`;
+            const s =  { type: 'success', details: status };
+            localStorage.setItem('botstatus', JSON.stringify(s));
+            console.log(new Date(), status);
+            const d = {
+              track_id: trackListArray[0].track_id,
+              id: data.insertId
+            }
+            tempArray.push(d);
+          }
+        });
+        status = `spotify_bot-${botID} Now playing track_id ${trackListArray[0].track_id} and playing track number: ${trackListArray[0].play_count+1}`;
+        const s =  { type: 'success', details: status };
+        localStorage.setItem('botstatus', JSON.stringify(s));
+        console.log(new Date(), status);
+
         SpotifyPlayer.play(trackListArray[0].track_url, botID, function (data) {
-          console.log('x');
+          status = `spotify_bot-${botID} track_id ${tempArray[0].track_id} -> ${data}`;
+          const s =  { type: 'success', details: status };
+          localStorage.setItem('botstatus', JSON.stringify(s));
+          console.log(new Date(), status);
           if (data == 'done') {
             --runningBot;
             data = {
-              track_id: tempArray[0],
+              track_id: tempArray[0].track_id,
               bot_id: `spotify_bot-${botID}`,
-              date: new Date().toISOString().slice(0, 10),
+              id: tempArray[0].id
             }
-            model.playedTracksModel.insertTrackIntoPlayedListData(data, function (err, data) {
-              if (err) { console.log(new Date(), 'some error occured while inserting track'); return; }
+            model.playedTracksModel.updatePlayTime(data, function (err, data) {
+              if (err) {
+                status = `spotify_bot-${botID} some error occured while inserting track`;
+                localStorage.setItem('botstatus','error');
+                console.log(new Date(), status);
+                return;
+              }
               if (data) {
-                console.log(new Date(), `track_id ${tempArray[0]} insert into played_track table`);
+                status = `spotify_bot-${botID} track_id ${tempArray[0].track_id} update endPlayTime into played_track table`;
+                const s =  { type: 'success', details: status };
+                localStorage.setItem('botstatus', JSON.stringify(s));
+                console.log(new Date(), status);
                 tempArray.shift();
                 if (tempArray.length == 0) getNewMusicTrack();
               }
             });
+          } else if (data == 'error') {
+            status = 'Error from SpotifyPlayer';
+            localStorage.setItem('botstatus','error');
+            console.log(new Date(), status);
+            --runningBot;
           }
         });
       } else {
@@ -92,12 +147,19 @@ const playTracks = () => {
 
   function botManager(input) {
     if (input == 'stop') {
-      console.log(new Date(), 'botManager stop');
+      status = 'botManager stop';
+      const s =  { type: 'success', details: status };
+      localStorage.setItem('botstatus', JSON.stringify(s));
+      console.log(new Date(), status);
       clearInterval(waitBot);
       runningBot = 0;
     }
     if (input == 'start') {
-      console.log(new Date(), 'botManager start');
+      status = 'botManager start';
+      const s =  { type: 'success', details: status };
+      localStorage.setItem('botstatus', JSON.stringify(s));
+      console.log(new Date(), status);
+     
       waitBot = setInterval(check, 1000);
       function check() {
         if (maxBot > runningBot) {
@@ -118,7 +180,10 @@ const playTracks = () => {
       if (trackListArray.length == 0) {
         clearInterval(wait);
         // botManager('stop');
-        console.log(new Date(), 'All tracks are played, need new tracks for play');
+        status = 'All tracks are played, need new tracks for play';
+        const s =  { type: 'success', details: status };
+        localStorage.setItem('botstatus', JSON.stringify(s));
+        console.log(new Date(), status);
         playTracks();
       }
     }

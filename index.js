@@ -3,6 +3,10 @@ const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const routes = require('./routes');
+if (typeof localStorage === "undefined" || localStorage === null) {
+  var LocalStorage = require('node-localstorage').LocalStorage;
+  localStorage = new LocalStorage('./scratch');
+}
 
 const app = express();
 const HOST = process.env.HOST || '0.0.0.0';
