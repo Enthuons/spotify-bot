@@ -7,6 +7,8 @@ if (typeof localStorage === "undefined" || localStorage === null) {
   localStorage = new LocalStorage('./scratch');
 }
 
+setInterval(() => {localStorage.setItem('botstatus', '');}, 6*60*1000)
+
 var trackListArray = [];
 var tempArray = [];
 var maxBot = config.bot_count;

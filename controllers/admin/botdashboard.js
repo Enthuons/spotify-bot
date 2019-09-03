@@ -2,6 +2,10 @@ const model = require('../../models');
 const spotifyplayer = require('../../service/SpotifyPlayer');
 const spotifyBot = require('../../service/spotifyBot');
 
+if (typeof localStorage === "undefined" || localStorage === null) {
+  var LocalStorage = require('node-localstorage').LocalStorage;
+  localStorage = new LocalStorage('./scratch');
+}
 
 const { exec } = require('child_process');
 
@@ -11,7 +15,7 @@ const botDashboard = (req, res) => {
   res.render('admin/pages/botdashboard');
 }
 
-const getListCount = (req, res) => {
+const getOverviewListCount = (req, res) => {
   var data = req.body;
   model.botDashboardModel.getListCountByDate(data, function (err, result) {
     if (err) return;
@@ -19,38 +23,82 @@ const getListCount = (req, res) => {
   });
 }
 
-const getTrackListCount = (req, res) => {
+const getListByDate = (req, res) => {
   var data = req.body;
-  model.botDashboardModel.getTrackListByDate(data, function (err, result) {
-    if (err) return;
-    res.status(200).send(result);
-  });
+  if(data.flag == 'tracks') {
+    console.log('1flag = tracks');
+    model.botDashboardModel.getTrackListByDate(data, function (err, result) {
+      if (err) return;
+      res.status(200).send(result);
+    });
+  } else {
+    console.log('1flag = bots');
+    model.botDashboardModel.getBotListByDate(data, function (err, result) {
+      if (err) return;
+      res.status(200).send(result);
+    });
+  }
 }
 
-const getBotListCount = (req, res) => {
+const getListByID = (req, res) => {
   var data = req.body;
-  model.botDashboardModel.getBotListByMusic(data, function (err, result) {
-    if (err) return;
-    res.status(200).send(result);
-  });
+  if(data.flag == 'tracks') {
+    console.log('2flag = tracks');
+    model.botDashboardModel.getBotListByMusic(data, function (err, result) {
+      if (err) return;
+      res.status(200).send(result);
+    });
+  } else {
+    console.log('2flag = bots');
+    model.botDashboardModel.getTrackListByBot(data, function (err, result) {
+      if (err) return;
+      res.status(200).send(result);
+    });
+  }
 }
 
 const getPlayDetailsCount = (req, res) => {
   var data = req.body;
+  console.log('data :', data);
   model.botDashboardModel.getPlayDetailsByBot(data, function (err, result) {
     if (err) return;
     res.status(200).send(result);
   });
 }
 
+// ---------------------------------------------------------------------------
+
+// const getBotListByDate = (req, res) => {
+//   var data = req.body;
+//   model.botDashboardModel.getBotListByDate(data, function (err, result) {
+//     if (err) return;
+//     res.status(200).send(result);
+//   });
+// }
+
+// const getTrackListByBot = (req, res) => {
+//   var data = req.body;
+//   model.botDashboardModel.getTrackListByBot(data, function (err, result) {
+//     if (err) return;
+//     res.status(200).send(result);
+//   });
+// }
+
+// ----------------------------------------------------------------------------
+
 const getBotStatus = (req, res) => {
-  const result = JSON.parse(localStorage.getItem('botstatus'));
-  res.status(200).send(result);
+  if (localStorage.getItem('botstatus')) {
+    const result = JSON.parse(localStorage.getItem('botstatus'));
+      // console.log('result: ', result);
+      res.status(200).send(result);
+  } else {
+    res.status(200).send('');
+  }
 }
 
 const serverTask = (req, res) => {
   var data = req.body;
-  console.log('data  : ', data);
+  // console.log('data  : ', data);
   var command = '';
   var task = data.command
   switch (task) {
@@ -81,13 +129,13 @@ const serverTask = (req, res) => {
 
   exec(command, (err, stdout, stderr) => {
     if (err) {
-      console.error(`exec error: ${err}`);
+      console.error(`execute command: ${task} \n exec error: ${err}`);
       res.status(200).send('Failed to execute the command');
       return;
     }
     res.status(200).send(stdout != '' ? stdout : 'Command execute successfully');
-    console.log(stdout);
+    console.log(`execute command: ${task} \n exec success: ${stdout}`);
   });
 }
 
-module.exports = { getListCount, botDashboard, getTrackListCount, getBotListCount, getPlayDetailsCount, getBotStatus, serverTask };
+module.exports = { getOverviewListCount, botDashboard, getListByDate, getListByID, getPlayDetailsCount, getBotStatus, serverTask };

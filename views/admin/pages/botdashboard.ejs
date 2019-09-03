@@ -5,7 +5,7 @@
 
 <head>
   <% include ../partials/head %>
-  <!-- <script>var track_id = window.location.search.split("=")[1];</script> -->
+  <!-- <script>var track_id = window.location.search.split("=")[1];</script>   -->
 
 </head>
 
@@ -36,37 +36,46 @@
         <div id="track-details" class="form-control" style="min-height: 230px; max-height: 1200px;">
           <div class="alert alert-lite" role="alert" style="text-align: center; ">Bot Status </div>
 
+          <div id="botstatus" class="alert alert-success" role="alert" style="text-align: center;"><span></span><span
+              onclick="$('#systemResponse ').toggle(); $('#system ').toggle(); return false;" class="alert-link"
+              style="text-decoration: underline; cursor: pointer;">More Option</span> </div>
+          <div id="botstatusDetails" class="alert alert-lite" style="display: block" role="alert"> </div>
+          <div id="system" class="form-control"
+            style="height: 108px; display: none; width: 88%; border: none; margin: auto;">
+            <button onclick="systemTask('getInfo')" class="btn btn-info"
+              style="margin: 1% 1% 1% 1%;  width: 31%; float: left;">Get Server Info</button>
+            <button onclick="systemTask('restart_bot')" class="btn btn-warning"
+              style="margin: 1% 1% 1% 1%;  width: 31%; float: left;">Restart bot</button>
+            <button onclick="systemTask('getTempfileCount')" class="btn btn-primary"
+              style="margin: 1% 1% 1% 1%;  width: 31%; float: left;">Get Temp File</button>
 
-
-
-          <div id="botstatus" class="alert alert-success" role="alert" style="text-align: center;"><span></span><span onclick="$('#botstatusDetails ').toggle(); $('#systemResponse ').toggle(); $('#system ').toggle(); return false;" class="alert-link" style="text-decoration: underline; cursor: pointer;">Click here</span> </div>
-          <div id="botstatusDetails" class="alert alert-lite" style="display: none" role="alert" > status: </div>
-          <div id="system" class="form-control" style="height: 108px; display: none; width: 88%; border: none; margin: auto;"> 
-            <button onclick="systemTask('getInfo')" class="btn btn-info" style="margin: 1% 1% 1% 1%;  width: 31%; float: left;">Get Server Info</button>
-            <button onclick="systemTask('restart_bot')" class="btn btn-warning" style="margin: 1% 1% 1% 1%;  width: 31%; float: left;">Restart bot</button>
-            <button onclick="systemTask('getTempfileCount')" class="btn btn-primary" style="margin: 1% 1% 1% 1%;  width: 31%; float: left;">Get Temp File</button>
-            
-            <button onclick="systemTask('clearTempFile')" class="btn btn-secondary" style="margin: 1% 1% 1% 1%;  width: 31%; float: left;">Clear Temp File</button>
-            <button onclick="systemTask('mysqlStatus')" class="btn btn-success" style="margin: 1% 1% 1% 1%;  width: 31%; float: left;">Check Mysql Status</button>
-            <button onclick="systemTask('restart_mysql')" class="btn btn-danger" style="margin: 1% 1% 1% 1%;  width: 31%; float: left;">Restart Mysql</button>
+            <button onclick="systemTask('clearTempFile')" class="btn btn-secondary"
+              style="margin: 1% 1% 1% 1%;  width: 31%; float: left;">Clear Temp File</button>
+            <button onclick="systemTask('mysqlStatus')" class="btn btn-success"
+              style="margin: 1% 1% 1% 1%;  width: 31%; float: left;">Check Mysql Status</button>
+            <button onclick="systemTask('restart_mysql')" class="btn btn-danger"
+              style="margin: 1% 1% 1% 1%;  width: 31%; float: left;">Restart Mysql</button>
           </div>
-          <div id="systemResponse" class="form-control" style=" display: none; margin-top: 10px; background-color: #222; color: #aaa; padding: 20px; max-height: 300px; min-height: 120px; overflow: auto;">
+          <div id="systemResponse" class="form-control"
+            style=" display: none; margin-top: 10px; background-color: #222; color: #aaa; padding: 20px; max-height: 300px; min-height: 120px; overflow: auto;">
             <h4 style="text-align: center">Response From Server</h4>
             <pre id="systemOutput" style="color: #cccfd0"></pre>
           </div>
 
           <hr>
-          <input id='date' class="form-control" style=" float: left; width: 40%; margin-right: 10px; height: 40px; margin-bottom: 10px" type="date" value="12/12/2019" name="Selectdate">
+          <input id='date' class="form-control"
+            style=" float: left; width: 40%; margin-right: 10px; height: 40px; margin-bottom: 10px" type="date"
+            value="12/12/2019" name="Selectdate">
 
           <button id="sortByToggleButton" type="button" class="btn btn-outline-info">Sort by tracks</button>
-            
+
           <div id="message" class="alert-light" style="text-align: center; ">
             <hr>Please select date to show bot result
           </div>
 
           <hr>
 
-          <div id="botList" style="display: block; margin-top: 18px; overflow: auto; max-height: 425px;">
+          <div id="allList" style="display: none; margin-top: 18px; overflow: auto; max-height: 425px;">
             <table id="botListTable" class="table table-hover">
               <thead style="display: none">
                 <tr>
@@ -81,39 +90,87 @@
             </table>
           </div>
 
-          <div id="musicList" style="display: none">
-              <div style="display: none; margin-top: 18px; height: 430px">
-                  <div
-                    style="height: 428px; border: 1px solid #4cadc3; border-radius: 4px; width: 30%; float: left;">
-                    <span style="text-align: center; display: block; padding: 5px 2px; color: #3dabbf; background-image: linear-gradient(#acd2d4, #fffff7);">Track List</span>
-                    <UL id="musicListDiv" style="padding-left: 0px; margin-bottom: 0px; overflow: auto; max-height: calc(100% - 34px);">
-                    </UL>
-                  </div>
-                  <div
-                    style="height: 428px; border: 1px solid #4cadc3; border-radius: 4px; width: 30%; float: left; margin-left: 1%; margin-right: 1%;">
-                    <span style="text-align: center; display: block; padding: 5px 2px; color: #3dabbf; background-image: linear-gradient(#acd2d4, #fffff7);">Bot List</span>
-                    <UL id="botListDiv" style="padding-left: 0px; margin-bottom: 0px; overflow: auto; max-height: calc(100% - 34px);">
-                    </UL>
-                  </div>
-                  <div
-                    style="height: 428px; border: 1px solid #4cadc3; border-radius: 4px; width: 38%; float: right;">
-                    <span style="text-align: center; display: block; padding: 5px 2px; color: #3dabbf; background-image: linear-gradient(#acd2d4, #fffff7);">Play Status</span>
-                      <div style="padding-left: 0px; margin-bottom: 0px; overflow: auto; max-height: calc(100% - 34px);">
-                          <table id="playListDiv" class="table table-hover">
-                              <thead>
-                                <tr>
-                                  <th>Start Play</th>
-                                  <th>End Track</th>
-                                  <th>Status</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                              </tbody>
-                            </table>
-                      </div>
-                  </div>
+          <div id="musicList" style="display: block">
+            <div style="display: none; margin-top: 18px; height: 430px">
+              <div style="height: 428px; border: 1px solid #4cadc3; border-radius: 4px; width: 30%; float: left;">
+                <span
+                  style="text-align: center; display: block; padding: 5px 2px; color: #3dabbf; background-image: linear-gradient(#acd2d4, #fffff7);">Track
+                  List</span>
+                <UL id="musicListDiv"
+                  style="padding-left: 0px; margin-bottom: 0px; overflow: auto; max-height: calc(100% - 34px);">
+                </UL>
               </div>
+              <div
+                style="height: 428px; border: 1px solid #4cadc3; border-radius: 4px; width: 30%; float: left; margin-left: 1%; margin-right: 1%;">
+                <span
+                  style="text-align: center; display: block; padding: 5px 2px; color: #3dabbf; background-image: linear-gradient(#acd2d4, #fffff7);">Bot
+                  List</span>
+                <UL id="botListDiv"
+                  style="padding-left: 0px; margin-bottom: 0px; overflow: auto; max-height: calc(100% - 34px);">
+                </UL>
+              </div>
+              <div style="height: 428px; border: 1px solid #4cadc3; border-radius: 4px; width: 38%; float: right;">
+                <span
+                  style="text-align: center; display: block; padding: 5px 2px; color: #3dabbf; background-image: linear-gradient(#acd2d4, #fffff7);">Play
+                  Status</span>
+                <div style="padding-left: 0px; margin-bottom: 0px; overflow: auto; max-height: calc(100% - 34px);">
+                  <table id="playListDiv" class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>Start Play</th>
+                        <th>End Track</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
           </div>
+
+
+          <!-- <div id="botList" style="display: none">
+            <div style="display: none; margin-top: 18px; height: 430px">
+              <div style="height: 428px; border: 1px solid #4cadc3; border-radius: 4px; width: 30%; float: left;">
+                <span
+                  style="text-align: center; display: block; padding: 5px 2px; color: #3dabbf; background-image: linear-gradient(#acd2d4, #fffff7);">Bot
+                  List</span>
+                <UL id="allBotListDiv"
+                  style="padding-left: 0px; margin-bottom: 0px; overflow: auto; max-height: calc(100% - 34px);">
+                </UL>
+              </div>
+              <div
+                style="height: 428px; border: 1px solid #4cadc3; border-radius: 4px; width: 30%; float: left; margin-left: 1%; margin-right: 1%;">
+                <span
+                  style="text-align: center; display: block; padding: 5px 2px; color: #3dabbf; background-image: linear-gradient(#acd2d4, #fffff7);">Track
+                  List</span>
+                <UL id="allTrackListDiv"
+                  style="padding-left: 0px; margin-bottom: 0px; overflow: auto; max-height: calc(100% - 34px);">
+                </UL>
+              </div>
+              <div style="height: 428px; border: 1px solid #4cadc3; border-radius: 4px; width: 38%; float: right;">
+                <span
+                  style="text-align: center; display: block; padding: 5px 2px; color: #3dabbf; background-image: linear-gradient(#acd2d4, #fffff7);">Play
+                  Status</span>
+                <div style="padding-left: 0px; margin-bottom: 0px; overflow: auto; max-height: calc(100% - 34px);">
+                  <table id="allPlayListDiv" class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>Start Play</th>
+                        <th>End Track</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div> -->
+
 
         </div>
 
@@ -147,6 +204,9 @@
 
   <script>
     var response = {};
+    var flag = 'tracks';
+ 
+    // get bot current status and manage server ________________________________________________
 
     systemTask = (data) => {
       $('#systemOutput').html('')
@@ -155,11 +215,7 @@
         type: "POST",
         data: { command: data },
         success: function (response) {
-          console.log('res : ', response);
-
-          // $('#systemResponse').html(response)
           $('#systemOutput').html(response)
-          
         },
         error: function (error) {
           console.error(error);
@@ -172,6 +228,7 @@
         url: '/admin/botstatus',
         type: "POST",
         success: function (response) {
+          // console.log('response : ', response);
           $('#botstatus').show();
           if (response.type == 'success') {
             $('#botstatus').removeClass('alert-success alert-danger alert-warning').addClass('alert-success');
@@ -184,8 +241,12 @@
           if (response.type == 'warning') {
             $('#botstatus').removeClass('alert-success alert-danger alert-warning').addClass('alert-warning');
             $($('#botstatus').children()[0]).html('Bot status: Bots are idle ');
+          } else if (response == '') {
+            $('#botstatus').removeClass('alert-success alert-danger alert-warning').addClass('alert-danger');
+            $($('#botstatus').children()[0]).html('Bot status: Error! Bots are not running ');
+            $('#botstatusDetails').html('Status: No response from bot server. please restart the bot ');
           }
-          $('#botstatusDetails').html(response.details);
+          $('#botstatusDetails').html(`Status: ${response.details}`);
         },
         error: function (error) {
           console.error(error);
@@ -193,9 +254,11 @@
       });
     }
 
-    setInterval(() => {getBotStatus();}, 1000)
-  
-    getData = (date = '') => {
+    setInterval(() => { getBotStatus(); }, 1000)
+
+    // show all data by date (playlist overview) ________________________________________________
+
+    getAllData = () => {
       if ($('#date').val() == '') return;
       $.ajax({
         url: '/admin/botdashboard',
@@ -210,7 +273,7 @@
           } else {
             $('#message').hide();
             $('#botListTable').find('thead').show();
-            showAllBotList(response);
+            showAllList(response);
           }
         },
         error: function (error) {
@@ -219,13 +282,33 @@
       });
     }
 
-    getMusicByDate = (date = '') => {
+    showAllList = (response) => {
+      let temp = '';
+      response.map((item, i) => {
+        prev = i > 0 ? response[i - 1].played_by_bot_id : '';
+        $('#botListTable').find('tbody').append(`
+          <tr>
+            <td>${item.played_by_bot_id == prev ? '' : item.played_by_bot_id}</td>
+            <td>${item.track_name}</td>
+            <td>${item.playCount}</td>
+            <td>Completed</td>
+          </tr>
+      `);
+      });
+    }
+
+    // Show sort by tracks _______________________________________________________________________
+
+    fetchListByDate = () => {
+      console.log('current flag is : ', flag);
       if ($('#date').val() == '') return;
+      var URL = '/admin/getlistbydate';
       $.ajax({
-        url: '/admin/getmusic',
+        url: URL,
         type: "POST",
-        data: { date: $('#date').val() },
+        data: { date: $('#date').val(), flag: flag },
         success: function (response) {
+          console.log('response1 : ', response);
           $('#musicListDiv').html('');
           if (response.length < 1) {
             $('#musicList').children().hide();
@@ -237,7 +320,7 @@
             $('#musicList').parent().show();
             $('#botListDiv').parent().hide();
             $('#playListDiv').parent().parent().hide();
-            showMusicList(response);
+            showListByDate(response);
           }
         },
         error: function (error) {
@@ -246,13 +329,18 @@
       });
     }
 
-    getBotByMusicId = (date = '', track_id = '') => {
-      if ($('#date').val() == '' || track_id == '') return;
+    fetchListById = (id) => {
+      if ($('#date').val() == '' || id == '') return;
+      var URL = 'getlistbyid';
+      var data = {date: $('#date').val(), flag: flag};
+      flag == 'tracks' ?  data.track_id = id : data.id = id;
+     
       $.ajax({
-        url: '/admin/getbot',
+        url: URL,
         type: "POST",
-        data: { date: $('#date').val(), track_id: track_id},
+        data: data,
         success: function (response) {
+          console.log('response2 : ', response);
           $('#botListDiv').html('');
           if (response.length < 1) {
             $('#musicList').children().hide();
@@ -264,7 +352,7 @@
             $('#musicList').parent().show();
             $('#botListDiv').parent().show();
             $('#playListDiv').parent().parent().hide();
-            showBotList(response);
+            showListByID(response);
           }
         },
         error: function (error) {
@@ -273,15 +361,16 @@
       });
     }
 
-    getPlayDetailsByBotId = (date = '', track_id = '', bot_id = '') => {
-      if ($('#date').val() == '' || track_id == '' || bot_id == '') return;
+    fetchPlaylist = (trackId = '', botId = '') => {
+      if ($('#date').val() == '' || trackId == '' || botId == '') return;
       $.ajax({
         url: '/admin/getplaydetails',
         type: "POST",
         data: {
           date: $('#date').val(),
-          track_id: track_id,
-          bot_id: bot_id,
+          track_id: trackId,
+          bot_id: botId,
+          flag: flag,
         },
         success: function (response) {
           $('#playListDiv').find('tbody').html('');
@@ -295,7 +384,7 @@
             $('#musicList').parent().show();
             $('#botListDiv').parent().show();
             $('#playListDiv').parent().parent().show();
-            showPlayList(response);
+            showPlayList(response.reverse());
           }
         },
         error: function (error) {
@@ -304,11 +393,11 @@
       });
     }
 
-    showMusicList = (response) => {
+    showListByDate = (response) => {
       response.map((item, i) => {
         $('#musicListDiv').append(`
-        <LI class="list-group-item list-group-item-action" onclick="getBotList('${item.track_id}', this)">
-          ${item.track_name}
+        <LI class="list-group-item list-group-item-action" onclick="getListById('${flag == 'tracks' ? item.track_id : item.played_by_bot_id}', this)">
+          ${flag == 'tracks' ? item.track_name : item.played_by_bot_id}
         <span class="badge badge-primary badge-pill" style="float: right; float: right; width: 30px; padding: 6px; border-radius: 4px;">${item.play_count}</span>
         </LI>
       `);
@@ -317,20 +406,47 @@
 
     showPlayList = (response) => {
       response.map((item, i) => {
-        // console.log(' item.created_at : ',  item.created_at);
-        // console.log(' item.updated_at : ',  item.updated_at);
+        console.log(' item.created_at : ',  item.created_at);
+        console.log(' item.updated_at : ',  item.updated_at);
+
+        // var d = new Date(item.created_at);
+
+
+
+        // var num = d.getUTCDate();
+        // var n = num.toString();
+        // var date = n.length <= 1 ? `0${n}` : n;
+
+        // var num = d.getUTCMonth();
+        // var n = num.toString();
+        // var month = n.length <= 1 ? `0${n}` : n;
+
+
+        // var a = `${d.getUTCFullYear()}-${month}-${date}T`;
+        // d.getUTCFullYear()
+        // d.getUTCMonth(),
+        // d.getUTCDate(),
+        // d.getUTCHours();
+        // d.getUTCMinutes();
+        // d.getUTCSeconds();
+
+
+        // var d = item.created_at;
+        // d.setMinutes(d.getMinutes() + 2);
+        // console.log('ABCD _____ : ', d);
+
+        // console.log(Math.floor((new Date()).getTime(item.created_at) / 1000));
+        // console.log(Math.floor((new Date()).getTime(d) / 1000));
+
+       
+
         var str = item.created_at;
         var res = str.split("T")
         var startTime = res[1].slice(0, 8);
-
         var str = item.updated_at;
         var res = str.split("T")
-        var endTime = item.created_at != '' && item.created_at == item.updated_at ?  '  -- : -- ' : res[1].slice(0, 8);
-      
-        var status = item.created_at != '' && item.created_at == item.updated_at ? 'Running' : 'Done';
-
-        console.log(' item.created_at : ',  startTime);
-        console.log(' item.updated_at : ',  endTime);
+        var endTime = item.created_at != '' && item.created_at == item.updated_at ? '  -- : -- ' : res[1].slice(0, 8);
+        var status = item.created_at != '' && item.created_at == item.updated_at ? 'Running' : 'Completed';
 
         $('#playListDiv').find('tbody').append(`
           <tr>
@@ -344,72 +460,56 @@
       });
     }
 
-    showBotList = (response) => {
+    showListByID = (response) => {
       response.map((item, i) => {
         $('#botListDiv').append(`
-        <LI class="list-group-item list-group-item-action" onclick="getPlayList('${item.track_id}', '${item.played_by_bot_id}', this)">
-          ${item.played_by_bot_id}
+        <LI class="list-group-item list-group-item-action" onclick="getPlaylist('${item.track_id}', '${item.played_by_bot_id}', this)">
+          ${flag == 'tracks' ? item.played_by_bot_id : item.track_name}
         <span class="badge badge-primary badge-pill" style="float: right; float: right; width: 30px; padding: 6px; border-radius: 4px;">${item.play_count}</span>
         </LI>
       `);
       });
     }
 
-    showAllBotList = (response) => {
-      let temp = '';
-      response.map((item, i) => {
-        prev = i > 0 ? response[i - 1].played_by_bot_id : '';
-        $('#botListTable').find('tbody').append(`
-          <tr>
-            <td>${item.played_by_bot_id == prev ? '' : item.played_by_bot_id}</td>
-            <td>${item.track_name}</td>
-            <td>${item.playCount}</td>
-            <td>Done</td>
-          </tr>
-      `);
-      });
-    }
-
-    getBotList = (track_id, selector) => {
+    getListById = (id, selector) => {
       $(selector).css('background-color', '#d6e4e8')
       $(selector).siblings().css('background-color', '');
-
-      const date = $('#date').val();
-      getBotByMusicId(date, track_id);
+      fetchListById(id);
     }
 
-    getPlayList = (track_id, bot_id, selector) => {
+    getPlaylist = (trackID, botID, selector) => {
       $(selector).css('background-color', '#d6e4e8')
       $(selector).siblings().css('background-color', '');
-      const date = $('#date').val();
-      getPlayDetailsByBotId(date, track_id, bot_id);
+      fetchPlaylist(trackID, botID);
     }
+
+
+    // others ___________________________________________________________________________________
 
     $(document).ready(function () {
       $('#onClickAddNewTrack').on('click', () => window.location.replace(`/admin`));
+      
+      $('#date').on('change', () => { getAllData(); fetchListByDate();});
 
-      $('#date').on('change', () => {
-        const date = $('#date').val();
-        getData(date);
-        getMusicByDate(date);
-      });
-      
       $('#date').change().val(new Date().toISOString().slice(0, 10));
-      getData(date);
-      getMusicByDate(date);
       
+      getAllData();
+      fetchListByDate();
+
       $('#sortByToggleButton').on('click', () => {
-        const date = $('#date').val();
-        if (date == null) return;
+        if ($('#date').val() == null ) return;
         if ($('#sortByToggleButton').html() == 'Sort by tracks') {
           $('#sortByToggleButton').html('Sort by bots');
-          getData(date);
+          flag = 'bots';
+          fetchListByDate();
+          // getAllData();
         } else {
           $('#sortByToggleButton').html('Sort by tracks');
-          getMusicByDate(date);
+          flag = 'tracks';
+          fetchListByDate();
         }
-          $('#botList').toggle();
-          $('#musicList').toggle();
+        // $('#allList').toggle();
+        // $('#musicList').toggle();
       });
     });
 

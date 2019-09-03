@@ -30,14 +30,12 @@ router.get('/tracklist', admin.dashboard.getAllList);
 router.post('/removetrack', admin.dashboard.removeTrack);
 
 router.get('/botdashboard', admin.botdashboard.botDashboard);
-router.post('/botdashboard', admin.botdashboard.getListCount);
-router.post('/getmusic', admin.botdashboard.getTrackListCount);
-router.post('/getbot', admin.botdashboard.getBotListCount);
+router.post('/botdashboard', admin.botdashboard.getOverviewListCount);
+router.post('/getlistbydate', admin.botdashboard.getListByDate);
+router.post('/getlistbyid', admin.botdashboard.getListByID);
 router.post('/getplaydetails', admin.botdashboard.getPlayDetailsCount);
 
 router.post('/botstatus', admin.botdashboard.getBotStatus);
 router.post('/servertask', admin.botdashboard.serverTask);
-
-
 
 module.exports = router;
