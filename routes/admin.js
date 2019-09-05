@@ -34,6 +34,7 @@ router.post('/botdashboard', admin.botdashboard.getOverviewListCount);
 router.post('/getlistbydate', admin.botdashboard.getListByDate);
 router.post('/getlistbyid', admin.botdashboard.getListByID);
 router.post('/getplaydetails', admin.botdashboard.getPlayDetailsCount);
+router.post('/getcurrentlist', admin.botdashboard.getCurrentList);
 
 router.post('/botstatus', admin.botdashboard.getBotStatus);
 router.post('/servertask', admin.botdashboard.serverTask);

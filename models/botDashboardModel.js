@@ -77,19 +77,31 @@ const getBotListByDate = (data, callback) => {
 }
 
 const getTrackListByBot = (data, callback) => {
-  console.log(data);
   pool.getConnection(function (err, connection) {
     if (err) throw err;
     var sql = `SELECT played_by_bot_id, track_id, COUNT(*) AS play_count, (SELECT track_name from tracklist WHERE track_id = played_tracks.track_id) AS track_name FROM played_tracks Where date = '${data.date}' and played_by_bot_id = '${data.id}' GROUP BY track_id`;
     connection.query(sql, function (err, result) {
       connection.release();
       if (err) { console.log(new Date(), 'ERROR from database:', err); callback(err, null); }
-      console.log(result);
       callback(null, result);
     });
   });
 }
 
+
+const getCurrentList = (data, callback) => {
+  pool.getConnection(function (err, connection) {
+    if (err) throw err;
+    var sql = `SELECT *, (SELECT track_name FROM tracklist WHERE track_id = played_tracks.track_id) AS track_name FROM played_tracks WHERE id IN (SELECT max(id) FROM played_tracks WHERE date = CURDATE() GROUP BY played_by_bot_id) ORDER BY played_by_bot_id ASC`;
+    connection.query(sql, function (err, result) {
+      connection.release();
+      if (err) { console.log(new Date(), 'ERROR from database:', err); callback(err, null); }
+      callback(null, result);
+    });
+  });
+}
+
+
 // SELECT * FROM `played_tracks` WHERE track_id = '3yaMdzICHzbaRPSrfjOtTa' and played_by_bot_id = 'spotify_bot-4' and date = '2019-09-03' ORDER BY id DESC LIMIT 1
 
-  module.exports = { getAllTrackListData, getListCountByDate, getTrackListByDate, getBotListByMusic, getPlayDetailsByBot, getBotListByDate, getTrackListByBot };
+  module.exports = { getAllTrackListData, getListCountByDate, getTrackListByDate, getBotListByMusic, getPlayDetailsByBot, getBotListByDate, getTrackListByBot, getCurrentList };

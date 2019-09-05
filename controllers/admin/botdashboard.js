@@ -26,13 +26,11 @@ const getOverviewListCount = (req, res) => {
 const getListByDate = (req, res) => {
   var data = req.body;
   if(data.flag == 'tracks') {
-    console.log('1flag = tracks');
     model.botDashboardModel.getTrackListByDate(data, function (err, result) {
       if (err) return;
       res.status(200).send(result);
     });
   } else {
-    console.log('1flag = bots');
     model.botDashboardModel.getBotListByDate(data, function (err, result) {
       if (err) return;
       res.status(200).send(result);
@@ -43,13 +41,11 @@ const getListByDate = (req, res) => {
 const getListByID = (req, res) => {
   var data = req.body;
   if(data.flag == 'tracks') {
-    console.log('2flag = tracks');
     model.botDashboardModel.getBotListByMusic(data, function (err, result) {
       if (err) return;
       res.status(200).send(result);
     });
   } else {
-    console.log('2flag = bots');
     model.botDashboardModel.getTrackListByBot(data, function (err, result) {
       if (err) return;
       res.status(200).send(result);
@@ -59,37 +55,24 @@ const getListByID = (req, res) => {
 
 const getPlayDetailsCount = (req, res) => {
   var data = req.body;
-  console.log('data :', data);
   model.botDashboardModel.getPlayDetailsByBot(data, function (err, result) {
     if (err) return;
     res.status(200).send(result);
   });
 }
 
-// ---------------------------------------------------------------------------
+const getCurrentList = (req, res) => {
+  var data = req.body;
+  model.botDashboardModel.getCurrentList(data, function (err, result) {
+    if (err) return;
+    res.status(200).send(result);
+  });
+}
 
-// const getBotListByDate = (req, res) => {
-//   var data = req.body;
-//   model.botDashboardModel.getBotListByDate(data, function (err, result) {
-//     if (err) return;
-//     res.status(200).send(result);
-//   });
-// }
-
-// const getTrackListByBot = (req, res) => {
-//   var data = req.body;
-//   model.botDashboardModel.getTrackListByBot(data, function (err, result) {
-//     if (err) return;
-//     res.status(200).send(result);
-//   });
-// }
-
-// ----------------------------------------------------------------------------
 
 const getBotStatus = (req, res) => {
   if (localStorage.getItem('botstatus')) {
     const result = JSON.parse(localStorage.getItem('botstatus'));
-      // console.log('result: ', result);
       res.status(200).send(result);
   } else {
     res.status(200).send('');
@@ -98,7 +81,6 @@ const getBotStatus = (req, res) => {
 
 const serverTask = (req, res) => {
   var data = req.body;
-  // console.log('data  : ', data);
   var command = '';
   var task = data.command
   switch (task) {
@@ -138,4 +120,4 @@ const serverTask = (req, res) => {
   });
 }
 
-module.exports = { getOverviewListCount, botDashboard, getListByDate, getListByID, getPlayDetailsCount, getBotStatus, serverTask };
+module.exports = { getOverviewListCount, botDashboard, getListByDate, getListByID, getPlayDetailsCount, getBotStatus, serverTask, getCurrentList };
