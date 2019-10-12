@@ -159,20 +159,13 @@
                         Your browser does not support the audio tag.
                       </audio>
                       <div style="height: 36px">
-                        <span class="btn" style="
-                            background-color: #5ec379;
-                            font-size: 13px;
-                            color: #fff;
-                            padding: 5px 6px;
-                            cursor: unset;
-                        "> Count ${item.play_count}</span>
-                        <button onclick="window.open('${item.track_url}')" class="btn" style=" background-color: #2e829b; color: white; font-size: 13px; padding: 5px 6px;"> <i class="fa fa-play"></i> Play in Spotify</button>
-                        <button id="trackBtn_${key}" onclick="removeTrack(${key})"  class="btn btn-danger" style="font-size: 13px; padding: 5px 6px;"><i class="fa fa-remove"></i> Remove</button>
+                        <span class="btn" style="background-color: #5ec379; font-size: 13px; color: #fff; padding: 5px 10px; cursor: unset;"> Count ${item.play_count}</span>
+                        <button onclick="window.open('${item.track_url}')" class="btn" style=" background-color: #2e829b; color: white; font-size: 13px; padding: 5px 10px;"> <i class="fa fa-play"></i> Play in Spotify</button>
+                        <button id="trackBtn_${key}" onclick="removeTrack(${key})"  class="btn btn-danger" style="font-size: 13px; padding: 5px 8px;"><i class="fa fa-remove"></i> Remove</button>
                       </div>
                       <div style="
                         border: 1px solid #aaa;
                         min-height: 27px;
-                        margin: 0px 15px 0px 0px;
                         border-radius: 30px;
                         background-color: #6c757d;
                         color: #fff;

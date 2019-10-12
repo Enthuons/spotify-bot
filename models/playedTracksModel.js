@@ -63,7 +63,7 @@ const getPlayedTracksDetailsData = (data, callback) => {
 const updatePlayTime = (data, callback) => {
   pool.getConnection(function (err, connection) {
     if (err) throw err;
-    var sql = `UPDATE played_tracks SET updated_at = CURTIME() WHERE id = '${data.id}'`;
+    var sql = `UPDATE played_tracks SET updated_at = CURTIME(), playtime = '${data.palyTime}' WHERE id = '${data.id}'`;
     connection.query(sql, function (err, result) {
       connection.release();
       if (err) { console.log(new Date(), 'ERROR from database:', err); callback(err, null); }

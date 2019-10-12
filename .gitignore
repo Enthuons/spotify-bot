@@ -1,11 +1,14 @@
-node_modules
+node_modules/
 build
 npm-debug.log
 .env
 .DS_Store
 config.json
-cookies.json
 core
 cookies_*.json
 scratch/
+screenshot/
 ecosystem.config.js
+test*.js
+*.backup*
+*.beta*

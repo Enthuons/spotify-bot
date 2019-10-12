@@ -1,4 +1,4 @@
-<!-- views/admin/pages/tracklist.ejs -->
+<!-- views/admin/pages/botdashboard.ejs -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -68,17 +68,14 @@
             value="12/12/2019" name="Selectdate">
 
           <button id="overviewListBtn" type="button" class="btn btn-outline-dark">Overview List</button>
-
-          
           <!-- <button id="sortByToggleButton" type="button" class="btn btn-outline-info">Sort by tracks</button> -->
           
           <label class="switch" style="float: right; margin-right: 20px; margin-top: 10px;">
             <input id="sortByToggleButton" disabled type="checkbox" id="switch">
             <span class="slider round"></span>
           </label>
-
           <span style="display: none; float: right; margin-right: 20px; padding: 6px;">Sort by track list</span>
-          
+
           <div id="message" class="alert-light" style="text-align: center; ">
           </div>
 
@@ -113,7 +110,7 @@
                 </UL>
               </div>
               <div
-                style="height: 428px; border: 1px solid #4cadc3; border-radius: 4px; width: 30%; float: left; margin-left: 1%; margin-right: 1%;">
+                style="height: 428px; border: 1px solid #4cadc3; border-radius: 4px; width: 25%; float: left; margin-left: 1%; margin-right: 1%;">
                 <span
                   style="text-align: center; display: block; padding: 5px 2px; color: #3dabbf; background-image: linear-gradient(#acd2d4, #fffff7);">Bot
                   List</span>
@@ -121,7 +118,7 @@
                   style="padding-left: 0px; margin-bottom: 0px; overflow: auto; max-height: calc(100% - 34px);">
                 </UL>
               </div>
-              <div style="height: 428px; border: 1px solid #4cadc3; border-radius: 4px; width: 38%; float: right;">
+              <div style="height: 428px; border: 1px solid #4cadc3; border-radius: 4px; width: 43%; float: right;">
                 <span
                   style="text-align: center; display: block; padding: 5px 2px; color: #3dabbf; background-image: linear-gradient(#acd2d4, #fffff7);">Play
                   Status</span>
@@ -129,9 +126,10 @@
                   <table id="playList" class="table table-hover">
                     <thead>
                       <tr>
-                        <th>Start Play</th>
-                        <th>End Track</th>
                         <th>Status</th>
+                        <th>Play Time</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -175,7 +173,7 @@
   <script>
     var response = {};
     var flag = 'tracks';
- 
+
     // get bot current status and manage server ________________________________________________
 
     systemTask = (data) => {
@@ -223,7 +221,7 @@
       });
     }
 
-    setInterval(() => { getBotStatus();}, 1000)
+    setInterval(() => { getBotStatus(); }, 1000)
 
     // show all data by date (playlist overview) ________________________________________________
 
@@ -251,16 +249,14 @@
       });
     }
 
-    setInterval(() => { getAllData();}, 5*1000)
+    setInterval(() => { getAllData(); }, 5 * 1000)
 
     showAllList = (response) => {
-      // let temp = '';
       response.map((item, i) => {
-
         var ct = Math.floor((new Date(item.created_at)).getTime() / 1000);
         var rt = Math.floor((new Date()).getTime() / 1000);
 
-        if (ct < rt-100) {
+        if (ct < rt - 100) {
           $('#botListTable').hide();
           $('#overviewList').find('span').html('No Running Bots');
           return;
@@ -318,9 +314,9 @@
     fetchListById = (id) => {
       if ($('#date').val() == '' || id == '') return;
       var URL = 'getlistbyid';
-      var data = {date: $('#date').val(), flag: flag};
-      flag == 'tracks' ?  data.track_id = id : data.id = id;
-     
+      var data = { date: $('#date').val(), flag: flag };
+      flag == 'tracks' ? data.track_id = id : data.id = id;
+
       $.ajax({
         url: URL,
         type: "POST",
@@ -383,7 +379,7 @@
         $('#listByDate').append(`
         <LI class="list-group-item list-group-item-action" onclick="getListById('${flag == 'tracks' ? item.track_id : item.played_by_bot_id}', this)">
           ${flag == 'tracks' ? item.track_name : item.played_by_bot_id}
-        <span class="badge badge-primary badge-pill" style="float: right; float: right; width: 30px; padding: 6px; border-radius: 4px;">${item.play_count}</span>
+        <span class="badge badge-primary badge-pill" style="float: right; float: right; padding: 6px 8px; border-radius: 4px;">${item.play_count}</span>
         </LI>
       `);
       });
@@ -393,23 +389,38 @@
       response.map((item, i) => {
         // console.log(' item.created_at : ',  item.created_at);
         // console.log(' item.updated_at : ',  item.updated_at);
-
         var ct = Math.floor((new Date(item.created_at)).getTime() / 1000);
         var ut = Math.floor((new Date(item.updated_at)).getTime() / 1000);
         var rt = Math.floor((new Date()).getTime() / 1000);
         var status = '';
         var modifydate = 1567513980;  // Tuesday, 3 September 2019 12:33:00
 
+
         if (ct < modifydate) {
-          status = 'Completed';
-        } else if (ut == ct && ct >= rt-100) {
-          status = 'Running';
-        } else if (ut == ct && ct < rt-100) {
-          status = 'Skipped';
-        } else if (ut > ct+100) {
-          status = 'Skipped';
+          status = {colorCode: 'success', text: 'Completed'};
+        } else if (item.playtime === '00:00' && ut === ct && ct > rt - 180) {
+          status = {colorCode: 'primary', text: 'Running'};
+        } else if (item.playtime === '00:00' && ut === ct && ct < rt - 180) {
+          status = {colorCode: 'dark', text: 'Skipped'};
+        } else if (item.playtime === '00:00' && ut > ct) {
+          status = {colorCode: 'warning', text: 'Not Played'};
+        } else if (item.playtime >= '0:40' && ut > ct) {
+          status = {colorCode: 'info', text: 'Timeout'};
+        } else if (item.playtime <= '0:30' && ut > ct) {
+          status = {colorCode: 'danger', text: 'Too Short'};
+        } else if (item.playtime < '0:40' && item.playtime > '0:30' && ut > ct) {
+          status = {colorCode: 'success', text: 'Completed'};
+        } else if (item.playtime >= '0:40') {
+          console.log('Timeout with warning ut !> ct');
+          status = {colorCode: 'info', text: 'Timeout'};
+        } else if (item.playtime <= '0:30') {
+          console.log('Too Short with warning ut !> ct');
+          status = {colorCode: 'danger', text: 'Too Short'};
+        } else if (item.playtime < '0:40' && item.playtime > '0:30') {
+          console.log('Completed with warning ut !> ct');
+          status = {colorCode: 'success', text: 'Completed'};
         } else {
-          status = 'Completed';
+          status = {colorCode: 'danger', text: 'Error!'};
         }
 
         var str = item.created_at;
@@ -422,11 +433,12 @@
 
         $('#playList').find('tbody').append(`
           <tr>
+            <td>
+              <span class="badge badge-${status.colorCode}" style="padding: 6px 4px; width: 76px;" >${status.text}</span>
+            </td>
+            <td>${item.playtime}</td>
             <td>${startTime}</td>
             <td>${endTime}</td>
-            <td>
-                <span class="badge ${status == 'Running' ? 'badge-info' : 'badge-primary'}" style="padding: 6px 6px;">${status}</span>  
-            </td>
           </tr>
         `);
       });
@@ -437,7 +449,7 @@
         $('#listById').append(`
         <LI class="list-group-item list-group-item-action" onclick="getPlaylist('${item.track_id}', '${item.played_by_bot_id}', this)">
           ${flag == 'tracks' ? item.played_by_bot_id : item.track_name}
-        <span class="badge badge-primary badge-pill" style="float: right; float: right; width: 30px; padding: 6px; border-radius: 4px;">${item.play_count}</span>
+        <span class="badge badge-primary badge-pill" style="float: right; float: right; padding: 6px 8px; border-radius: 4px;">${item.play_count}</span>
         </LI>
       `);
       });
@@ -459,17 +471,17 @@
 
     $(document).ready(function () {
       $('#onClickAddNewTrack').on('click', () => window.location.replace(`/admin`));
-      
-      $('#date').on('change', () => { getAllData(); fetchListByDate();});
+
+      $('#date').on('change', () => { getAllData(); fetchListByDate(); });
 
       $('#date').change().val(new Date().toISOString().slice(0, 10));
-      
+
       // getAllData();
       // fetchListByDate();
 
       $('#sortByToggleButton').on('change', () => {
-        if ($('#date').val() == null ) return;
-        if($('#sortByToggleButton').is(':checked')) {
+        if ($('#date').val() == null) return;
+        if ($('#sortByToggleButton').is(':checked')) {
           flag = 'bots';
           $('#listByDate').siblings('span').html('Bot List');
           $('#listById').siblings('span').html('Track List');
@@ -484,9 +496,8 @@
         $('#overviewList').hide();
       });
 
-
       $('#overviewListBtn').on('click', () => {
-        if ($('#date').val() == null ) return;
+        if ($('#date').val() == null) return;
         if ($('#overviewListBtn').html() == 'Overview List') {
           $('#overviewListBtn').html('All list');
           $('#sortByToggleButton').removeAttr("disabled");
@@ -501,9 +512,7 @@
         $('#allList').toggle();
       });
 
-      
     });
-
 
   </script>
 

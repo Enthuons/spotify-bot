@@ -193,14 +193,14 @@
                     Your browser does not support the audio tag.
                   </audio>
                   
-                  <div style="padding: 2px 6px">
+                  <div style="padding: 2px 2px">
                     <span>
                       Total play count:
                     </span>
                     <span id="inputField" style="display: inline-block;">
-                      <input type="text" value="${data.play_count}" disabled style="width: 60px;
+                      <input type="number" value="${data.play_count}" disabled style="width: 65px;
                       border: none;
-                      padding: 0px 6px;">
+                      padding: 0px 2px;">
                     </span>
                     <span id="editButton" style="color: #2d84db; cursor: pointer;">
                       Edit
@@ -237,8 +237,6 @@
       $('#track-details').html('');
       $('#track-details').html('There have no play record found')
     } 
-
-    
   }
  
     $(document).ready(function () {
