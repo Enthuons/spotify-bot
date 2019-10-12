@@ -12,3 +12,4 @@ ecosystem.config.js
 test*.js
 *.backup*
 *.beta*
+*.zip
