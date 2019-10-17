@@ -42,24 +42,36 @@
           <div id="botstatusDetails" class="alert alert-lite" style="display: block" role="alert"> </div>
           <div id="system" class="form-control"
             style="height: 108px; display: none; width: 88%; border: none; margin: auto;">
-            <button onclick="systemTask('getInfo')" class="btn btn-info"
-              style="margin: 1% 1% 1% 1%;  width: 31%; float: left;">Get Server Info</button>
-            <button onclick="systemTask('restart_bot')" class="btn btn-warning"
-              style="margin: 1% 1% 1% 1%;  width: 31%; float: left;">Restart bot</button>
-            <button onclick="systemTask('getTempfileCount')" class="btn btn-primary"
-              style="margin: 1% 1% 1% 1%;  width: 31%; float: left;">Get Temp File</button>
+            <button onclick="systemTask('get_log', 100)" class="btn btn-warning"
+              style="margin: 1% 1% 1% 1%;  width: 31%; float: left;">Get Log</button>
+            <button onclick="systemTask('stop_bot')" class="btn btn-danger"
+              style="margin: 1% 1% 1% 1%;  width: 31%; float: left;">Stop Bot</button>
+            <button onclick="systemTask('restart_bot')" class="btn btn-success"
+              style="margin: 1% 1% 1% 1%;  width: 31%; float: left;">Restart Bot</button>
 
-            <button onclick="systemTask('clearTempFile')" class="btn btn-secondary"
+            <button onclick="systemTask('get_Info')" class="btn btn-info"
+              style="margin: 1% 1% 1% 1%;  width: 31%; float: left;">Get Server Info</button>
+            <button onclick="systemTask('clear_Temp_File')" class="btn btn-primary"
               style="margin: 1% 1% 1% 1%;  width: 31%; float: left;">Clear Temp File</button>
-            <button onclick="systemTask('mysqlStatus')" class="btn btn-success"
-              style="margin: 1% 1% 1% 1%;  width: 31%; float: left;">Check Mysql Status</button>
-            <button onclick="systemTask('restart_mysql')" class="btn btn-danger"
+            <button onclick="systemTask('restart_mysql')" class="btn btn-dark"
               style="margin: 1% 1% 1% 1%;  width: 31%; float: left;">Restart Mysql</button>
           </div>
           <div id="systemResponse" class="form-control"
             style=" display: none; margin-top: 10px; background-color: #222; color: #aaa; padding: 20px; max-height: 300px; min-height: 120px; overflow: auto;">
             <h4 style="text-align: center">Response From Server</h4>
+            <span onclick="systemTask('get_log', currentLineNo+=100)"
+            style = "color: #24feff;
+              border-bottom: 1px solid #f54c19;
+              cursor: pointer;
+              display: none;
+              padding: 2px 4px;"> << </span>
             <pre id="systemOutput" style="color: #cccfd0"></pre>
+            <span onclick="systemTask('get_log', currentLineNo-=100)"
+            style = "color: #24feff;
+              border-bottom: 1px solid #f54c19;
+              cursor: pointer;
+              display: none;
+              padding: 2px 4px;"> >> </span>
           </div>
 
           <hr>
@@ -69,7 +81,7 @@
 
           <button id="overviewListBtn" type="button" class="btn btn-outline-dark">Overview List</button>
           <!-- <button id="sortByToggleButton" type="button" class="btn btn-outline-info">Sort by tracks</button> -->
-          
+
           <label class="switch" style="float: right; margin-right: 20px; margin-top: 10px;">
             <input id="sortByToggleButton" disabled type="checkbox" id="switch">
             <span class="slider round"></span>
@@ -173,15 +185,36 @@
   <script>
     var response = {};
     var flag = 'tracks';
+    var autoRestart = false;
+    var currentLineNo = 100;
 
     // get bot current status and manage server ________________________________________________
 
-    systemTask = (data) => {
+    systemTask = (data, startPoint = null, type = 'normal') => {
+      var a = $('#systemOutput').siblings();
+
+      // if (!confirm(`Do you really want to ${data}`)) return;s
+
+      if (type != 'force' && data != 'get_log' && data != 'get_Info') {
+        if (!confirm(`Do you really want to ${data}`)) return;
+      }
+
+      if(data === 'get_log') {
+        $(a[1]).show();
+        $(a[2]).show();
+        if(currentLineNo <= 100) $(a[2]).hide();      
+      } else {
+        $(a[1]).hide();
+        $(a[2]).hide();
+      }
+
+      
+
       $('#systemOutput').html('')
       $.ajax({
         url: '/admin/servertask',
         type: "POST",
-        data: { command: data },
+        data: { command: data, startPoint },
         success: function (response) {
           $('#systemOutput').html(response)
         },
@@ -191,6 +224,18 @@
       });
     }
 
+    autoRestartBot = (inputTime) => {
+      // autoRestart = true;
+      $($('#botstatus').children()[0]).html(`Bot will automaticlly restart after ${inputTime} seconds`);
+      $('#botstatusDetails').html(`Bot will automaticlly restart after ${inputTime} seconds`);
+      setTimeout(() => {
+        if (autoRestart) {
+          systemTask('restart_bot', null, 'force');
+          autoRestart = false;
+        }
+      }, inputTime * 1000);
+    }
+
     getBotStatus = () => {
       $.ajax({
         url: '/admin/botstatus',
@@ -198,20 +243,27 @@
         success: function (response) {
           $('#botstatus').show();
           if (response.type == 'success') {
+            autoRestart = false;
             $('#botstatus').removeClass('alert-success alert-danger alert-warning').addClass('alert-success');
             $($('#botstatus').children()[0]).html('Bot status: All bots are running ');
           }
           if (response.type == 'error') {
+            autoRestart = false;
             $('#botstatus').removeClass('alert-success alert-danger alert-warning').addClass('alert-danger');
             $($('#botstatus').children()[0]).html('Bot status: Some Error occured. Bot stop running ');
           }
           if (response.type == 'warning') {
+            autoRestart = false;
             $('#botstatus').removeClass('alert-success alert-danger alert-warning').addClass('alert-warning');
             $($('#botstatus').children()[0]).html('Bot status: Bots are idle ');
           } else if (response == '') {
-            $('#botstatus').removeClass('alert-success alert-danger alert-warning').addClass('alert-danger');
-            $($('#botstatus').children()[0]).html('Bot status: Error! Bots are not running ');
-            $('#botstatusDetails').html('Status: No response from bot server. please restart the bot ');
+            if (!autoRestart) {
+              // $('#botstatus').removeClass('alert-success alert-danger alert-warning').addClass('alert-danger');
+              // $($('#botstatus').children()[0]).html('Bot status: Error! Bots are not running ');
+              // $('#botstatusDetails').html('Status: No response from bot server. please restart the bot ');
+              autoRestart = true;
+              autoRestartBot(20);
+            }
           }
           $('#botstatusDetails').html(`Status: ${response.details}`);
         },
@@ -395,32 +447,26 @@
         var status = '';
         var modifydate = 1567513980;  // Tuesday, 3 September 2019 12:33:00
 
-
         if (ct < modifydate) {
-          status = {colorCode: 'success', text: 'Completed'};
+          status = { colorCode: 'success', text: 'Completed' };
+        } else if (item.playtime === 'N/A') {
+          status = { colorCode: 'danger', text: 'Error!' };
         } else if (item.playtime === '00:00' && ut === ct && ct > rt - 180) {
-          status = {colorCode: 'primary', text: 'Running'};
+          status = { colorCode: 'primary', text: 'Running' };
         } else if (item.playtime === '00:00' && ut === ct && ct < rt - 180) {
-          status = {colorCode: 'dark', text: 'Skipped'};
+          status = { colorCode: 'dark', text: 'Skipped' };
         } else if (item.playtime === '00:00' && ut > ct) {
-          status = {colorCode: 'warning', text: 'Not Played'};
-        } else if (item.playtime >= '0:40' && ut > ct) {
-          status = {colorCode: 'info', text: 'Timeout'};
-        } else if (item.playtime <= '0:30' && ut > ct) {
-          status = {colorCode: 'danger', text: 'Too Short'};
-        } else if (item.playtime < '0:40' && item.playtime > '0:30' && ut > ct) {
-          status = {colorCode: 'success', text: 'Completed'};
+          status = { colorCode: 'warning', text: 'Playtime N/A' };
+        } else if (item.playtime === '0:00' && ut > ct) {
+          status = { colorCode: 'warning', text: 'Not Played' };
         } else if (item.playtime >= '0:40') {
-          console.log('Timeout with warning ut !> ct');
-          status = {colorCode: 'info', text: 'Timeout'};
-        } else if (item.playtime <= '0:30') {
-          console.log('Too Short with warning ut !> ct');
-          status = {colorCode: 'danger', text: 'Too Short'};
+          status = { colorCode: 'info', text: 'Timeout' };
+        } else if (item.playtime > '0:00' && item.playtime <= '0:30') {
+          status = { colorCode: 'danger', text: 'Too Short' };
         } else if (item.playtime < '0:40' && item.playtime > '0:30') {
-          console.log('Completed with warning ut !> ct');
-          status = {colorCode: 'success', text: 'Completed'};
+          status = { colorCode: 'success', text: 'Completed' };
         } else {
-          status = {colorCode: 'danger', text: 'Error!'};
+          status = { colorCode: 'danger', text: 'N/A' };
         }
 
         var str = item.created_at;

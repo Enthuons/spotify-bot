@@ -7,7 +7,7 @@ if (typeof localStorage === "undefined" || localStorage === null) {
   localStorage = new LocalStorage('./scratch');
 }
 
-setInterval(() => { localStorage.setItem('botstatus', ''); }, 6 * 60 * 1000)
+setInterval(() => { localStorage.setItem('botstatus', ''); }, 8 * 60 * 1000)
 
 var trackListArray = [];
 var tempArray = [];
